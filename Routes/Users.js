@@ -7,7 +7,7 @@ var cors = require('cors')
 users.use(cors());
 
 
-users.post('/login', function(req, res) {
+users.get('/login', function(req, res) {
     var appData = {};
     var email = req.body.email || req.query.email;
     var password = req.body.password || req.query.password;
