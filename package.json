@@ -1,7 +1,7 @@
 {
-  "name": "EgyBestEnhancer",
+  "name": "PharmacyFinder",
   "version": "1.0.0",
-  "description": "EgyBestEnhancer Server",
+  "description": "PharmacyFinder Server",
   "main": "server.js",
   "scripts": {
     "test": "node server.js"
