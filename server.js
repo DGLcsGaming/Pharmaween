@@ -14,7 +14,7 @@ app.use(bodyParser.urlencoded({
 
 var Users = require('./Routes/Users');
 
-app.use('/users',Users);
+app.use('/',Users);
 
 /*app.use(express.static(__dirname + '/files'));
 

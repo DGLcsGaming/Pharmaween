@@ -17,6 +17,10 @@ users.get('/login', function(req, res) {
             appData["data"] = "خطأ في الإتصال بقاعدة البيانات, سنقوم بحل المشكلة قريبا, نعتذر على الإزعاج";
             res.status(200).json(appData);
         } else {
+            appData.error = 0;
+                    appData["data"] = "Logged in sucessfully";
+                    res.status(200).json(appData);
+            /*
             connection.query('SELECT * FROM users WHERE email = ?', [email], function(err, UsersRows, fields) {
                 if (err) {
                     appData.error = 1;
@@ -29,6 +33,7 @@ users.get('/login', function(req, res) {
                 }
             });
             connection.release();
+            */
         }
     });
 });
