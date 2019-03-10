@@ -25,42 +25,6 @@ function addPharmacy(){
     });
 }
 
-users.get('/today/:state/:city?', function(req, res) {
-    var appData = {};
-    var city = req.params.city;
-    
-    database.connection.getConnection(function(err, connection) {
-        if (err) {
-            appData["error"] = 1;
-            appData["data"] = "Error connecting to the database, we will fix the problem shortly.";
-            res.status(200).json(appData);
-        } else {
-            appData.error = 0;
-            var data = {
-                'state': state,
-                'city': city
-            };
-            appData["data"] = data;
-            res.status(200).json(appData);
-            /*
-            connection.query('SELECT * FROM users WHERE email = ?', [email], function(err, UsersRows, fields) {
-                if (err) {
-                    appData.error = 1;
-                    appData["data"] = "حدث خطأ أثناء عملية تسجيل الدخول";
-                    res.status(200).json(appData);
-                } else {
-                    appData.error = 0;
-                    appData["data"] = "Logged in sucessfully";
-                    res.status(200).json(appData);
-                }
-            });
-            connection.release();
-            */
-        }
-    });
-    
-});
-
 users.get('/pharmacies/state/:state', function(req, res) {
     var appData = {};
     var state = req.params.state;
@@ -71,7 +35,7 @@ users.get('/pharmacies/state/:state', function(req, res) {
             appData["data"] = "Error connecting to the database, we will fix the problem shortly.";
             res.status(200).json(appData);
         } else {
-            connection.query('select pharmacy.name,pharmacy.lon,pharmacy.lat, city.name AS city, state.name AS state FROM pharmacy JOIN city ON city.id=pharmacy.cityId JOIN state ON state.code=city.stateCode WHERE state.code=?', [state], function(err, CityRows, fields) {
+            connection.query('SELECT pharmacy.name,pharmacy.lon,pharmacy.lat, city.name AS city, state.name AS state FROM pharmacy JOIN city ON city.id=pharmacy.cityId JOIN state ON state.code=city.stateCode WHERE state.code=?', [state], function(err, CityRows, fields) {
                 if (err) {
                     appData.error = 1;
                     appData["data"] = err;
@@ -99,13 +63,44 @@ users.get('/pharmacies/city/:city', function(req, res) {
             appData["data"] = "Error connecting to the database, we will fix the problem shortly.";
             res.status(200).json(appData);
         } else {
-            connection.query('select pharmacy.name,pharmacy.lon,pharmacy.lat, city.name AS city, state.name AS state FROM pharmacy JOIN city ON city.id=pharmacy.cityId JOIN state ON state.code=city.stateCode WHERE city.id = ?', [city], function(err, CityRows, fields) {
+            connection.query('SELECT pharmacy.name,pharmacy.lon,pharmacy.lat, city.name AS city, state.name AS state FROM pharmacy JOIN city ON city.id=pharmacy.cityId JOIN state ON state.code=city.stateCode WHERE city.id = ?', [city], function(err, CityRows, fields) {
                 if (err) {
                     appData.error = 1;
                     appData["data"] = err;
                     res.status(200).json(appData);
                 } else {
                     appData.error = 0;
+                    var data = CityRows;
+                    appData["data"] = data;
+                    res.status(200).json(appData);
+                }
+            });
+            connection.release();
+        }
+    });
+    
+});
+
+
+users.get('/shifts/city/:city', function(req, res) {
+    var appData = {};
+    var city = req.params.city;
+    
+    database.connection.getConnection(function(err, connection) {
+        if (err) {
+            appData["error"] = 1;
+            appData["data"] = "Error connecting to the database, we will fix the problem shortly.";
+            res.status(200).json(appData);
+        } else {
+            console.log('City:'+city);
+            connection.query('SELECT pharmacy.name AS Pharmacy, pharmacy.lon, pharmacy.lat, nightshift.date, city.name AS City, state.name AS State FROM pharmacy JOIN nightshift ON nightshift.pharmacyId=pharmacy.id JOIN city ON city.id=pharmacy.cityId JOIN state ON state.code=city.stateCode WHERE city.id = ?', [city], function(err, CityRows, fields) {
+                if (err) {
+                    appData.error = 1;
+                    appData["data"] = err;
+                    res.status(200).json(appData);
+                } else {
+                    appData.error = 0;
+                    console.log(CityRows);
                     var data = CityRows;
                     appData["data"] = data;
                     res.status(200).json(appData);
