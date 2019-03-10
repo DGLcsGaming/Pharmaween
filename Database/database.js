@@ -2,10 +2,10 @@ var mysql = require('mysql');
 
 var connection = mysql.createPool({
     connectionLimit: 100,
-    host:'mysql6001.site4now.net', //212.24.96.173
-    user:'a463d0_pharma', //dglcsgaming
-    password:'fawri1997', //08061997
-    database:'db_a463d0_pharma', //egybest
+    host:'localhost', //mysql6001.site4now.net
+    user:'root', //a463d0_pharma
+    password:'08061997', //fawri1997
+    database:'pharmaciesshifts', //db_a463d0_pharma
     port: 3306,
     debug: false,
     multipleStatements: true
