@@ -30,7 +30,7 @@ users.get('/', function(req, res) {
     var appData = {};
 
     appData["error"] = 1;
-    appData["data"] = "Usage: /pharmacies, /shifts";
+    appData["data"] = "Usage: /pharmacy ,/pharmacies, /shifts";
     res.status(200).json(appData);
 });
 
@@ -39,6 +39,14 @@ users.get('/pharmacies', function(req, res) {
 
     appData["error"] = 1;
     appData["data"] = "Usage: /pharmacies/state/<stateId>, /pharmacies/city/<cityId>";
+    res.status(200).json(appData);
+});
+
+users.get('/pharmacy', function(req, res) {
+    var appData = {};
+
+    appData["error"] = 1;
+    appData["data"] = "Usage: /pharmacy/<pharmacyId>";
     res.status(200).json(appData);
 });
 
