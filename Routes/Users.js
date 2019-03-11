@@ -60,7 +60,7 @@ users.get('/shifts', function(req, res) {
 
 ////Implementation
 //Pharmacy Info
-users.get('/pharmacy/:pharamcy?', function(req, res) {
+users.get('/pharmacy/:pharmacy?', function(req, res) {
     var appData = {};
     var pharmacy = req.params.pharmacy;
     if(pharmacy == null){
