@@ -25,24 +25,90 @@ function addPharmacy(){
     });
 }
 
-users.get('/pharmacies/state/:state', function(req, res) {
+// Usage Guide
+users.get('/', function(req, res) {
+    var appData = {};
+
+    appData["error"] = 1;
+    appData["data"] = "Usage: /pharmacies, /shifts";
+    res.status(200).json(appData);
+});
+
+users.get('/pharmacies', function(req, res) {
+    var appData = {};
+
+    appData["error"] = 1;
+    appData["data"] = "Usage: /pharmacies/state/<stateId>, /pharmacies/city/<cityId>";
+    res.status(200).json(appData);
+});
+
+users.get('/shifts', function(req, res) {
+    var appData = {};
+
+    appData["error"] = 1;
+    appData["data"] = "Usage: /shifts/today/city/<cityId>, /shifts/yesterday/city/<cityId>, /shifts/tomorrow/city/<cityId> | /shifts/today/state/<stateId>, /shifts/yesterday/state/<stateId>, /shifts/tomorrow/state/<stateId>, ";
+    res.status(200).json(appData);
+});
+
+////Implementation
+//Pharmacy Info
+users.get('/pharmacy/:pharamcy?', function(req, res) {
+    var appData = {};
+    var pharmacy = req.params.pharmacy;
+    if(pharmacy == null){
+        appData["error"] = 1;
+        appData["data"] = "pharmacyId is required, Usage: /pharmacy/<pharmacyId>";
+        res.status(200).json(appData);
+        return;
+    }
+    database.connection.getConnection(function(err, connection) {
+        if (err) {
+            appData["error"] = 1;
+            appData["data"] = "Error connecting to the database, we will fix the problem shortly.";
+            res.status(200).json(appData);
+        } else {
+            connection.query('SELECT pharmacy.name,pharmacy.lon,pharmacy.lat, pharmacy.image, city.name AS city, state.name AS state FROM pharmacy JOIN city ON city.id=pharmacy.cityId JOIN state ON state.code=city.stateCode WHERE pharmacy.id = ?', [pharmacy], function(err, PharmacyRows, fields) {
+                if (err) {
+                    appData.error = 1;
+                    appData["data"] = err;
+                    res.status(200).json(appData);
+                } else {
+                    appData.error = 0;
+                    var data = PharmacyRows;
+                    appData["data"] = data;
+                    res.status(200).json(appData);
+                }
+            });
+            connection.release();
+        }
+    });
+    
+});
+
+//Pharmacies in an area
+users.get('/pharmacies/state/:state?', function(req, res) {
     var appData = {};
     var state = req.params.state;
-    
+    if(state == null){
+        appData["error"] = 1;
+        appData["data"] = "stateId is required, Usage: /pharmacies/state/<stateId>";
+        res.status(200).json(appData);
+        return;
+    }
     database.connection.getConnection(function(err, connection) {
         if (err) {
             appData["error"] = 1;
             appData["data"] = "Error connecting to the database, we will fix the problem shortly.";
             res.status(200).json(appData);
         } else {
-            connection.query('SELECT pharmacy.name,pharmacy.lon,pharmacy.lat, city.name AS city, state.name AS state FROM pharmacy JOIN city ON city.id=pharmacy.cityId JOIN state ON state.code=city.stateCode WHERE state.code=?', [state], function(err, CityRows, fields) {
+            connection.query('SELECT pharmacy.name,pharmacy.lon,pharmacy.lat, pharmacy.image, city.name AS city, state.name AS state FROM pharmacy JOIN city ON city.id=pharmacy.cityId JOIN state ON state.code=city.stateCode WHERE state.code=?', [state], function(err, StateRows, fields) {
                 if (err) {
                     appData.error = 1;
                     appData["data"] = err;
                     res.status(200).json(appData);
                 } else {
                     appData.error = 0;
-                    var data = CityRows;
+                    var data = StateRows;
                     appData["data"] = data;
                     res.status(200).json(appData);
                 }
@@ -53,9 +119,15 @@ users.get('/pharmacies/state/:state', function(req, res) {
     
 });
 
-users.get('/pharmacies/city/:city', function(req, res) {
+users.get('/pharmacies/city/:city?', function(req, res) {
     var appData = {};
     var city = req.params.city;
+    if(city == null){
+        appData["error"] = 1;
+        appData["data"] = "cityId is required, Usage: /pharmacies/city/<cityId>";
+        res.status(200).json(appData);
+        return;
+    }
     
     database.connection.getConnection(function(err, connection) {
         if (err) {
@@ -63,7 +135,7 @@ users.get('/pharmacies/city/:city', function(req, res) {
             appData["data"] = "Error connecting to the database, we will fix the problem shortly.";
             res.status(200).json(appData);
         } else {
-            connection.query('SELECT pharmacy.name,pharmacy.lon,pharmacy.lat, city.name AS city, state.name AS state FROM pharmacy JOIN city ON city.id=pharmacy.cityId JOIN state ON state.code=city.stateCode WHERE city.id = ?', [city], function(err, CityRows, fields) {
+            connection.query('SELECT pharmacy.name,pharmacy.lon,pharmacy.lat, pharmacy.image, city.name AS city, state.name AS state FROM pharmacy JOIN city ON city.id=pharmacy.cityId JOIN state ON state.code=city.stateCode WHERE city.id = ?', [city], function(err, CityRows, fields) {
                 if (err) {
                     appData.error = 1;
                     appData["data"] = err;
@@ -81,10 +153,16 @@ users.get('/pharmacies/city/:city', function(req, res) {
     
 });
 
-
-users.get('/shifts/city/:city', function(req, res) {
+//Shifts
+users.get('/shifts/today/city/:city?', function(req, res) {
     var appData = {};
     var city = req.params.city;
+    if(city == null){
+        appData["error"] = 1;
+        appData["data"] = "cityId is required, Usage: /shifts/today/city/<cityId>";
+        res.status(200).json(appData);
+        return;
+    }
     
     database.connection.getConnection(function(err, connection) {
         if (err) {
@@ -92,15 +170,13 @@ users.get('/shifts/city/:city', function(req, res) {
             appData["data"] = "Error connecting to the database, we will fix the problem shortly.";
             res.status(200).json(appData);
         } else {
-            console.log('City:'+city);
-            connection.query('SELECT pharmacy.name AS Pharmacy, pharmacy.lon, pharmacy.lat, nightshift.date, city.name AS City, state.name AS State FROM pharmacy JOIN nightshift ON nightshift.pharmacyId=pharmacy.id JOIN city ON city.id=pharmacy.cityId JOIN state ON state.code=city.stateCode WHERE city.id = ?', [city], function(err, CityRows, fields) {
+            connection.query('SELECT pharmacy.name AS Pharmacy, pharmacy.lon, pharmacy.lat, pharmacy.image, nightshift.date, city.name AS City, state.name AS State FROM pharmacy JOIN nightshift ON nightshift.pharmacyId=pharmacy.id JOIN city ON city.id=pharmacy.cityId JOIN state ON state.code=city.stateCode WHERE city.id = ? AND date=CURRENT_DATE()', [city], function(err, CityRows, fields) {
                 if (err) {
                     appData.error = 1;
                     appData["data"] = err;
                     res.status(200).json(appData);
                 } else {
                     appData.error = 0;
-                    console.log(CityRows);
                     var data = CityRows;
                     appData["data"] = data;
                     res.status(200).json(appData);
@@ -111,4 +187,177 @@ users.get('/shifts/city/:city', function(req, res) {
     });
     
 });
+
+users.get('/shifts/yesterday/city/:city?', function(req, res) {
+    var appData = {};
+    var city = req.params.city;
+    if(city == null){
+        appData["error"] = 1;
+        appData["data"] = "cityId is required, Usage: /shifts/yesterday/city/<cityId>";
+        res.status(200).json(appData);
+        return;
+    }
+    
+    database.connection.getConnection(function(err, connection) {
+        if (err) {
+            appData["error"] = 1;
+            appData["data"] = "Error connecting to the database, we will fix the problem shortly.";
+            res.status(200).json(appData);
+        } else {
+            connection.query('SELECT pharmacy.name AS Pharmacy, pharmacy.lon, pharmacy.lat, pharmacy.image, nightshift.date, city.name AS City, state.name AS State FROM pharmacy JOIN nightshift ON nightshift.pharmacyId=pharmacy.id JOIN city ON city.id=pharmacy.cityId JOIN state ON state.code=city.stateCode WHERE city.id = ? AND date=CURRENT_DATE()-1', [city], function(err, CityRows, fields) {
+                if (err) {
+                    appData.error = 1;
+                    appData["data"] = err;
+                    res.status(200).json(appData);
+                } else {
+                    appData.error = 0;
+                    var data = CityRows;
+                    appData["data"] = data;
+                    res.status(200).json(appData);
+                }
+            });
+            connection.release();
+        }
+    });
+    
+});
+
+users.get('/shifts/tomorrow/city/:city?', function(req, res) {
+    var appData = {};
+    var city = req.params.city;
+    if(city == null){
+        appData["error"] = 1;
+        appData["data"] = "cityId is required, Usage: /shifts/tomorrow/city/<cityId>";
+        res.status(200).json(appData);
+        return;
+    }
+    
+    database.connection.getConnection(function(err, connection) {
+        if (err) {
+            appData["error"] = 1;
+            appData["data"] = "Error connecting to the database, we will fix the problem shortly.";
+            res.status(200).json(appData);
+        } else {
+            connection.query('SELECT pharmacy.name AS Pharmacy, pharmacy.lon, pharmacy.lat, pharmacy.image, nightshift.date, city.name AS City, state.name AS State FROM pharmacy JOIN nightshift ON nightshift.pharmacyId=pharmacy.id JOIN city ON city.id=pharmacy.cityId JOIN state ON state.code=city.stateCode WHERE city.id = ? AND date=CURRENT_DATE()+1', [city], function(err, CityRows, fields) {
+                if (err) {
+                    appData.error = 1;
+                    appData["data"] = err;
+                    res.status(200).json(appData);
+                } else {
+                    appData.error = 0;
+                    var data = CityRows;
+                    appData["data"] = data;
+                    res.status(200).json(appData);
+                }
+            });
+            connection.release();
+        }
+    });
+    
+});
+
+users.get('/shifts/today/state/:state?', function(req, res) {
+    var appData = {};
+    var state = req.params.state;
+    if(state == null){
+        appData["error"] = 1;
+        appData["data"] = "stateId is required, Usage: /shifts/today/state/<stateId>";
+        res.status(200).json(appData);
+        return;
+    }
+    
+    database.connection.getConnection(function(err, connection) {
+        if (err) {
+            appData["error"] = 1;
+            appData["data"] = "Error connecting to the database, we will fix the problem shortly.";
+            res.status(200).json(appData);
+        } else {
+            connection.query('SELECT pharmacy.name AS Pharmacy, pharmacy.lon, pharmacy.lat, pharmacy.image, nightshift.date, city.name AS City, state.name AS State FROM pharmacy JOIN nightshift ON nightshift.pharmacyId=pharmacy.id JOIN city ON city.id=pharmacy.cityId JOIN state ON state.code=city.stateCode WHERE state.id = ? AND date=CURRENT_DATE()', [state], function(err, StateRows, fields) {
+                if (err) {
+                    appData.error = 1;
+                    appData["data"] = err;
+                    res.status(200).json(appData);
+                } else {
+                    appData.error = 0;
+                    var data = StateRows;
+                    appData["data"] = data;
+                    res.status(200).json(appData);
+                }
+            });
+            connection.release();
+        }
+    });
+    
+});
+
+users.get('/shifts/yesterday/state/:state?', function(req, res) {
+    var appData = {};
+    var state = req.params.state;
+    if(state == null){
+        appData["error"] = 1;
+        appData["data"] = "stateId is required, Usage: /shifts/yesterday/state/<stateId>";
+        res.status(200).json(appData);
+        return;
+    }
+    
+    database.connection.getConnection(function(err, connection) {
+        if (err) {
+            appData["error"] = 1;
+            appData["data"] = "Error connecting to the database, we will fix the problem shortly.";
+            res.status(200).json(appData);
+        } else {
+            connection.query('SELECT pharmacy.name AS Pharmacy, pharmacy.lon, pharmacy.lat, pharmacy.image, nightshift.date, city.name AS City, state.name AS State FROM pharmacy JOIN nightshift ON nightshift.pharmacyId=pharmacy.id JOIN city ON city.id=pharmacy.cityId JOIN state ON state.code=city.stateCode WHERE state.id = ? AND date=CURRENT_DATE()-1', [state], function(err, StateRows, fields) {
+                if (err) {
+                    appData.error = 1;
+                    appData["data"] = err;
+                    res.status(200).json(appData);
+                } else {
+                    appData.error = 0;
+                    var data = StateRows;
+                    appData["data"] = data;
+                    res.status(200).json(appData);
+                }
+            });
+            connection.release();
+        }
+    });
+    
+});
+
+users.get('/shifts/tomorrow/state/:state?', function(req, res) {
+    var appData = {};
+    var state = req.params.state;
+    if(state == null){
+        appData["error"] = 1;
+        appData["data"] = "stateId is required, Usage: /shifts/tomorrow/state/<stateId>";
+        res.status(200).json(appData);
+        return;
+    }
+    
+    database.connection.getConnection(function(err, connection) {
+        if (err) {
+            appData["error"] = 1;
+            appData["data"] = "Error connecting to the database, we will fix the problem shortly.";
+            res.status(200).json(appData);
+        } else {
+            connection.query('SELECT pharmacy.name AS Pharmacy, pharmacy.lon, pharmacy.lat, pharmacy.image, nightshift.date, city.name AS City, state.name AS State FROM pharmacy JOIN nightshift ON nightshift.pharmacyId=pharmacy.id JOIN city ON city.id=pharmacy.cityId JOIN state ON state.code=city.stateCode WHERE state.id = ? AND date=CURRENT_DATE()+1', [state], function(err, StateRows, fields) {
+                if (err) {
+                    appData.error = 1;
+                    appData["data"] = err;
+                    res.status(200).json(appData);
+                } else {
+                    appData.error = 0;
+                    var data = StateRows;
+                    appData["data"] = data;
+                    res.status(200).json(appData);
+                }
+            });
+            connection.release();
+        }
+    });
+    
+});
+
+
+
 module.exports = users;
