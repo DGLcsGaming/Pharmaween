@@ -5,7 +5,6 @@ var path = require('path');
 var app = express();
 var port = process.env.PORT || 3000; //hello
 
-app.use("/paymentSlip",express.static('paymentSlip'));
 app.use(bodyParser.json());
 app.use(cors());
 app.use(bodyParser.urlencoded({
