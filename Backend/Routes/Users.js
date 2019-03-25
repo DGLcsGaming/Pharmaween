@@ -178,7 +178,7 @@ users.get('/shifts/today/city/:city?', function(req, res) {
             appData["data"] = "Error connecting to the database, we will fix the problem shortly.";
             res.status(200).json(appData);
         } else {
-            connection.query('SELECT pharmacy.name AS Pharmacy, pharmacy.lon, pharmacy.lat, pharmacy.image, nightshift.date, city.name AS City, state.name AS State FROM pharmacy JOIN nightshift ON nightshift.pharmacyId=pharmacy.id JOIN city ON city.id=pharmacy.cityId JOIN state ON state.code=city.stateCode WHERE city.id = ? AND date=CURRENT_DATE()', [city], function(err, CityRows, fields) {
+            connection.query('SELECT pharmacy.name AS pharmacy, pharmacy.lon, pharmacy.lat, pharmacy.image, nightshift.date, city.name AS city, state.name AS state FROM pharmacy JOIN nightshift ON nightshift.pharmacyId=pharmacy.id JOIN city ON city.id=pharmacy.cityId JOIN state ON state.code=city.stateCode WHERE city.id = ? AND date=CURRENT_DATE()', [city], function(err, CityRows, fields) {
                 if (err) {
                     appData.error = 1;
                     appData["data"] = err;
@@ -212,7 +212,7 @@ users.get('/shifts/yesterday/city/:city?', function(req, res) {
             appData["data"] = "Error connecting to the database, we will fix the problem shortly.";
             res.status(200).json(appData);
         } else {
-            connection.query('SELECT pharmacy.name AS Pharmacy, pharmacy.lon, pharmacy.lat, pharmacy.image, nightshift.date, city.name AS City, state.name AS State FROM pharmacy JOIN nightshift ON nightshift.pharmacyId=pharmacy.id JOIN city ON city.id=pharmacy.cityId JOIN state ON state.code=city.stateCode WHERE city.id = ? AND date=CURRENT_DATE()-1', [city], function(err, CityRows, fields) {
+            connection.query('SELECT pharmacy.name AS pharmacy, pharmacy.lon, pharmacy.lat, pharmacy.image, nightshift.date, city.name AS city, state.name AS state FROM pharmacy JOIN nightshift ON nightshift.pharmacyId=pharmacy.id JOIN city ON city.id=pharmacy.cityId JOIN state ON state.code=city.stateCode WHERE city.id = ? AND date=CURRENT_DATE()-1', [city], function(err, CityRows, fields) {
                 if (err) {
                     appData.error = 1;
                     appData["data"] = err;
@@ -246,7 +246,7 @@ users.get('/shifts/tomorrow/city/:city?', function(req, res) {
             appData["data"] = "Error connecting to the database, we will fix the problem shortly.";
             res.status(200).json(appData);
         } else {
-            connection.query('SELECT pharmacy.name AS Pharmacy, pharmacy.lon, pharmacy.lat, pharmacy.image, nightshift.date, city.name AS City, state.name AS State FROM pharmacy JOIN nightshift ON nightshift.pharmacyId=pharmacy.id JOIN city ON city.id=pharmacy.cityId JOIN state ON state.code=city.stateCode WHERE city.id = ? AND date=CURRENT_DATE()+1', [city], function(err, CityRows, fields) {
+            connection.query('SELECT pharmacy.name AS pharmacy, pharmacy.lon, pharmacy.lat, pharmacy.image, nightshift.date, city.name AS city, state.name AS state FROM pharmacy JOIN nightshift ON nightshift.pharmacyId=pharmacy.id JOIN city ON city.id=pharmacy.cityId JOIN state ON state.code=city.stateCode WHERE city.id = ? AND date=CURRENT_DATE()+1', [city], function(err, CityRows, fields) {
                 if (err) {
                     appData.error = 1;
                     appData["data"] = err;
@@ -280,7 +280,7 @@ users.get('/shifts/today/state/:state?', function(req, res) {
             appData["data"] = "Error connecting to the database, we will fix the problem shortly.";
             res.status(200).json(appData);
         } else {
-            connection.query('SELECT pharmacy.name AS Pharmacy, pharmacy.lon, pharmacy.lat, pharmacy.image, nightshift.date, city.name AS City, state.name AS State FROM pharmacy JOIN nightshift ON nightshift.pharmacyId=pharmacy.id JOIN city ON city.id=pharmacy.cityId JOIN state ON state.code=city.stateCode WHERE state.id = ? AND date=CURRENT_DATE()', [state], function(err, StateRows, fields) {
+            connection.query('SELECT pharmacy.name AS pharmacy, pharmacy.lon, pharmacy.lat, pharmacy.image, nightshift.date, city.name AS city, state.name AS state FROM pharmacy JOIN nightshift ON nightshift.pharmacyId=pharmacy.id JOIN city ON city.id=pharmacy.cityId JOIN state ON state.code=city.stateCode WHERE state.id = ? AND date=CURRENT_DATE()', [state], function(err, StateRows, fields) {
                 if (err) {
                     appData.error = 1;
                     appData["data"] = err;
@@ -314,7 +314,7 @@ users.get('/shifts/yesterday/state/:state?', function(req, res) {
             appData["data"] = "Error connecting to the database, we will fix the problem shortly.";
             res.status(200).json(appData);
         } else {
-            connection.query('SELECT pharmacy.name AS Pharmacy, pharmacy.lon, pharmacy.lat, pharmacy.image, nightshift.date, city.name AS City, state.name AS State FROM pharmacy JOIN nightshift ON nightshift.pharmacyId=pharmacy.id JOIN city ON city.id=pharmacy.cityId JOIN state ON state.code=city.stateCode WHERE state.id = ? AND date=CURRENT_DATE()-1', [state], function(err, StateRows, fields) {
+            connection.query('SELECT pharmacy.name AS pharmacy, pharmacy.lon, pharmacy.lat, pharmacy.image, nightshift.date, city.name AS city, state.name AS state FROM pharmacy JOIN nightshift ON nightshift.pharmacyId=pharmacy.id JOIN city ON city.id=pharmacy.cityId JOIN state ON state.code=city.stateCode WHERE state.id = ? AND date=CURRENT_DATE()-1', [state], function(err, StateRows, fields) {
                 if (err) {
                     appData.error = 1;
                     appData["data"] = err;
@@ -348,7 +348,7 @@ users.get('/shifts/tomorrow/state/:state?', function(req, res) {
             appData["data"] = "Error connecting to the database, we will fix the problem shortly.";
             res.status(200).json(appData);
         } else {
-            connection.query('SELECT pharmacy.name AS Pharmacy, pharmacy.lon, pharmacy.lat, pharmacy.image, nightshift.date, city.name AS City, state.name AS State FROM pharmacy JOIN nightshift ON nightshift.pharmacyId=pharmacy.id JOIN city ON city.id=pharmacy.cityId JOIN state ON state.code=city.stateCode WHERE state.id = ? AND date=CURRENT_DATE()+1', [state], function(err, StateRows, fields) {
+            connection.query('SELECT pharmacy.name AS pharmacy, pharmacy.lon, pharmacy.lat, pharmacy.image, nightshift.date, city.name AS city, state.name AS state FROM pharmacy JOIN nightshift ON nightshift.pharmacyId=pharmacy.id JOIN city ON city.id=pharmacy.cityId JOIN state ON state.code=city.stateCode WHERE state.id = ? AND date=CURRENT_DATE()+1', [state], function(err, StateRows, fields) {
                 if (err) {
                     appData.error = 1;
                     appData["data"] = err;
