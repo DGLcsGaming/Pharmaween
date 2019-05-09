@@ -25,7 +25,7 @@ $.ajax({
             '<h5>Date: <span id="pharamcyDate">'+pharmacyDate+'</span></h5>'+
             '<img id="pharmacyImg" src="'+pharmacyImg+'">'+
             '<div id="navigationContainer">'+
-                '<img id="navigationImg" src="/navigation.png">'+
+                '<img id="navigationImg" src="./navigation.png">'+
                 '<a id="pharamacyGoogleMapsLink" target="_blank" href="'+pharamacyGoogleMapsLink+'">Click to navigate using Google Maps</a>'+
             '</div>'+
         '</div>');
