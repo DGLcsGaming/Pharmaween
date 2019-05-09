@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+
+<head>
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" type="text/css" media="screen" href="style.css" />
+    <script src="jquery-3.3.1.min.js"></script>
+    <link href="bootstrap.min.css" rel="stylesheet" id="bootstrap-css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+    <script type="text/javascript" src="bootstrap.min.js"></script>
+    <script type="text/javascript" src="jquery.validate.min.js"></script>
+    <script type="text/javascript" src="register.js"></script>
+</head>
+
+<body>
+    <div class="wrapper fadeInDown">
+
+        <!-- Signup-->
+        <div id="formContent-signup">
+            <!-- Tabs Titles -->
+
+            <!-- Icon -->
+            <div class="fadeIn first">
+                <img src="https://cdn.egy.best/static/img/egybest_logo_small.png" id="icon" alt="User Icon" />
+                <h6>حساب جديد</h6>
+            </div>
+
+            <!-- Signup Form -->
+            <form id="formSignup">
+                <div class="form-group">
+                    <input type="text" id="first_name" class="fadeIn second" name="first_name" placeholder="الإسم الأول"
+                        required>
+                </div>
+                <div class="form-group">
+                    <input type="text" id="last_name" class="fadeIn second" name="last_name" placeholder="إسم العائلة"
+                        required>
+                </div>
+                <div class="form-group">
+                    <input type="email" id="email_signup" class="fadeIn third" name="email" placeholder="البريد الإلكتروني"
+                        class="form-control" required>
+                </div>
+                <div class="form-group">
+                    <label class="countrycode">(+213) 0</label>
+                    <input type="tel" id="tel_signup" class="fadeIn third" name="tel" placeholder="رقم الهاتف" maxlength="9"
+                        class="form-control" required>
+                </div>
+                <div class="form-group">
+                    <input type="password" id="password_signup" class="fadeIn third" name="password" placeholder="كلمة المرور"
+                        class="form-control" required>
+                </div>
+                <div class="form-group">
+                    <input type="password" id="confirm_password_signup" class="fadeIn fourth" name="confirm_password"
+                        placeholder="تأكيد كلمة المرور" class="form-control" required>
+                </div>
+                <input type="submit" class="fadeIn fourth" value="التسجيل">
+            </form>
+
+            <!-- Remind Passowrd -->
+            <div id="formFooter-signup">
+                <a class="underlineHover" href="/login">!قم بتسجيل الدخول الآن</a>
+                <span>لديك حساب بالفعل؟</span>
+            </div>
+
+        </div>
+
+        <!-- Login Loading Spinner-->
+            <div id="loginLoading" class="lds-roller" style="display: none;">
+                    <div></div>
+                    <div></div>
+                    <div></div>
+                    <div></div>
+                    <div></div>
+                    <div></div>
+                    <div></div>
+                    <div></div>
+            </div>
+
+
+    </div>
+</body>
+
+</html>

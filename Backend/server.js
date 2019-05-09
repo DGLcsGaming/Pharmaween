@@ -13,7 +13,7 @@ app.use(bodyParser.urlencoded({
 
 var Routes = require('./Routes/Routes');
 
-app.use('/',Routes);
+app.use('/api',Routes);
 
 app.use(express.static(__dirname + '/files'));
 

@@ -5,9 +5,9 @@ var cors = require('cors');
 var jwt = require('jsonwebtoken');
 var bcrypt = require('bcrypt-nodejs');
 
-
-
 users.use(cors());
+
+process.env.SECRET_KEY = "dglcsgaming";
 
 users.post('/register', function(req, res) {
     var appData = {
@@ -72,13 +72,9 @@ users.post('/login', function(req, res) {
                 } else {
                     if (UsersRows.length > 0) {
                         if (bcrypt.compareSync(password, UsersRows[0].password)) {
-                            let token = jwt.sign({id: UsersRows[0].id, email: UsersRows[0].email, first_name: UsersRows[0].first_name, last_name: UsersRows[0].last_name}, process.env.SECRET_KEY);
+                            let token = jwt.sign({id: UsersRows[0].id, email: UsersRows[0].email, first_name: UsersRows[0].first_name, last_name: UsersRows[0].last_name, last_name: UsersRows[0].tel}, process.env.SECRET_KEY);
                             appData.error = 0;
                             appData["token"] = token;
-                            appData["id"] = UsersRows[0].id;
-                            appData["email"] = UsersRows[0].email;
-                            appData["first_name"] = UsersRows[0].first_name;
-                            appData["last_name"] = UsersRows[0].last_name;
                             res.status(200).json(appData);
                         } else {
                             appData.error = 1;
@@ -107,33 +103,6 @@ users.post('/addpharmacy', function(req, res) {
         "image" : req.body.image
     };
 
-    database.connection.getConnection(function(err, connection) {
-        if (err) {
-            appData["error"] = 1;
-            appData["data"] = "خطأ في الإتصال بقاعدة البيانات, سنقوم بحل المشكلة قريبا, نعتذر على الإزعاج";
-            res.status(200).json(appData);
-        } else {
-            connection.query('INSERT INTO pharmacy SET ?', pharmacy, function(err, UsersRows, fields) {
-                if (err) {
-                    appData["error"] = 1;
-                    appData["data"] = "خطأ في الإتصال بقاعدة البيانات, سنقوم بحل المشكلة قريبا, نعتذر على الإزعاج";
-                    res.status(200).json(appData);
-                } else {
-                    appData["error"] = 1;
-                    appData["data"] = "تم إضافة الصيدلية بنجاح";
-                    res.status(200).json(appData);
-                }
-            });
-            connection.release();
-        }
-    });
-});
-
-users.post('/setadmin', function(req, res) {
-    var appData = {};
-    var token = req.body.token || req.headers['token'] || req.query.token;
-    var email = req.query.email || req.body.email;
-    var targetid = req.body.id || req.query.id;
     if (token) {
         try {
             var decoded = jwt.verify(token, process.env.SECRET_KEY);
@@ -155,7 +124,80 @@ users.post('/setadmin', function(req, res) {
                                 res.status(200).json(appData);
                             }else{
                                 if(rows.length > 0 && rows[0].isadmin == 1){ 
-                                    // TODO
+                                    connection.query('INSERT INTO pharmacy SET ?', pharmacy, function(err, UsersRows, fields) {
+                                        if (err) {
+                                            appData["error"] = 1;
+                                            appData["data"] = "خطأ في الإتصال بقاعدة البيانات, سنقوم بحل المشكلة قريبا, نعتذر على الإزعاج";
+                                            res.status(200).json(appData);
+                                        } else {
+                                            appData["error"] = 0;
+                                            appData["data"] = "تم إضافة الصيدلية بنجاح";
+                                            res.status(200).json(appData);
+                                        }
+                                    });
+                                }else{
+                                    appData["error"] = 1;
+                                    appData["data"] = "Unauthorized access";
+                                    res.status(200).json(appData);
+                                }
+                            }
+                        });
+                        connection.release();
+                    }
+                });
+            }
+        } catch (err) {
+            appData["error"] = 1;
+            appData["data"] = "Token is invalid";
+            res.status(200).json(appData);
+        }
+    }else{
+        appData["error"] = 1;
+        appData["data"] = "Please send a token";
+        res.status(200).json(appData);
+    }
+});
+
+users.post('/setmoderator', function(req, res) {
+    var appData = {};
+    var token = req.body.token || req.headers['token'] || req.query.token;
+    var email = req.query.email || req.body.email;
+    var moderator = {
+        "userid": req.body.id || req.query.id,
+        "cityId": req.body.cityId || req.query.cityId
+    };
+    if (token) {
+        try {
+            var decoded = jwt.verify(token, process.env.SECRET_KEY);
+            if(decoded.email != email){
+                appData["error"] = 1;
+                appData["data"] = "Unauthorized";
+                return res.status(200).json(appData);
+            }else{
+                database.connection.getConnection(function(err, connection) {
+                    if (err) {
+                        appData["error"] = 1;
+                        appData["data"] = "خطأ في الإتصال بقاعدة البيانات, سنقوم بحل المشكلة قريبا, نعتذر على الإزعاج";
+                        res.status(200).json(appData);
+                    } else {
+                        connection.query('SELECT isadmin FROM users WHERE id=(SELECT users.id FROM users WHERE email=?)', [email], function(err, rows, fields) {
+                            if (err) {
+                                appData["error"] = 1;
+                                appData["data"] = "خطأ في الإتصال بقاعدة البيانات, سنقوم بحل المشكلة قريبا, نعتذر على الإزعاج";
+                                res.status(200).json(appData);
+                            }else{
+                                if(rows.length > 0 && rows[0].isadmin == 1){ 
+                                    connection.query('INSERT INTO moderators SET ?', moderator, function(err, rows, fields) {
+                                        if (err) {
+                                            appData["error"] = 1;
+                                            appData["data"] = "خطأ في الإتصال بقاعدة البيانات, سنقوم بحل المشكلة قريبا, نعتذر على الإزعاج";
+                                            res.status(200).json(appData);
+                                        }else{
+                                            appData["error"] = 0;
+                                            appData["data"] = "تم إضافة المشرف بنجاح";
+                                            res.status(200).json(appData);
+                                        }
+                                    });
                                 }else{
                                     appData["error"] = 1;
                                     appData["data"] = "Unauthorized access";

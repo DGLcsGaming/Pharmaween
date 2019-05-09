@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+
+<head>
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" type="text/css" media="screen" href="style.css" />
+    <script src="jquery-3.3.1.min.js"></script>
+    <link href="bootstrap.min.css" rel="stylesheet" id="bootstrap-css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+    <script type="text/javascript" src="bootstrap.min.js"></script>
+    <script type="text/javascript" src="jquery.validate.min.js"></script>
+    <script type="text/javascript" src="login.js"></script>
+</head>
+
+<body>
+    <div class="wrapper fadeInDown">
+        <!-- Login-->
+        <div id="formContent-login">
+            <!-- Tabs Titles -->
+            <!-- Icon -->
+            <div class="fadeIn first">
+                <img src="https://cdn.egy.best/static/img/egybest_logo_small.png" id="icon" alt="User Icon" />
+                <h6>تسجيل الدخول</h6>
+            </div>
+
+            <!-- Login Form -->
+            <form id="formLogin">
+                <div class="form-group">
+                    <input type="email" id="email" class="fadeIn second" name="email" placeholder="البريد الإلكتروني"
+                        class="form-control" required>
+                </div>
+                <div class="form-group">
+                    <input type="password" id="password" class="fadeIn third" name="password" placeholder="كلمة المرور"
+                        class="form-control" required>
+                </div>
+                <div class="form-group">
+                    <input type="submit" class="fadeIn fourth" value="تسجيل الدخول">
+                </div>
+            </form>
+
+            <!-- Reset Password-->
+            <div>
+                <a id="resetPassword" class="underlineHover" href="#">نسيت كلمة المرور؟</a>
+            </div>
+
+            <!-- Not Registered? -->
+            <div id="formFooter-login">
+                <a class="underlineHover" href="/register">!قم بالتسجيل الآن</a>
+                <span>ليس لديك حساب؟</span>
+            </div>
+
+        </div>
+
+        <!-- Login Loading Spinner-->
+            <div id="loginLoading" class="lds-roller" style="display: none;">
+                    <div></div>
+                    <div></div>
+                    <div></div>
+                    <div></div>
+                    <div></div>
+                    <div></div>
+                    <div></div>
+                    <div></div>
+            </div>
+
+
+    </div>
+</body>
+
+</html>

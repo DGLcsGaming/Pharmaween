@@ -3,7 +3,7 @@ var mymap = L.map('mapid');
 $.ajax({
     type: "GET",
     dataType: "json",
-    url: "http://localhost:3000/shifts/today/city/54",
+    url: "http://localhost:3000/api/shifts/today/city/54",
     success: function(res){
         var pharmacyName = res.data[0].pharmacy;
         var pharmacyLat = res.data[0].lat;
