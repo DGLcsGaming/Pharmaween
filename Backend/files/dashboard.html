@@ -1,0 +1,430 @@
+<!DOCTYPE html>
+
+<head>
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" type="text/css" media="screen" href="style.css" />
+    <script src="jquery-3.3.1.min.js"></script>
+    <link href="bootstrap.min.css" rel="stylesheet" id="bootstrap-css">
+    <script type="text/javascript" src="bootstrap.min.js"></script>
+    <script type="text/javascript" src="dashboard.js"></script>
+</head>
+
+<body>
+    <div class="wrapper fadeInDown">
+        <!-- Login-->
+        <div id="formContent-login">
+            <!-- Tabs Titles -->
+            <!-- Icon -->
+            <div class="fadeIn first">
+                <img src="https://cdn.egy.best/static/img/egybest_logo_small.png" id="icon" alt="User Icon" />
+            </div>
+            <br>
+            <div dir="rtl" lang="ar">تمتع بتجربة تصفح لا مثيل لها لموقع EgyBest</div>
+            <br>
+            <!-- Login&Register Buttons -->
+            <div id="loginAndRegister" style="display: flex;flex-direction: row;justify-content: space-evenly;">
+                <input id="register" type="button" value="حساب جديد"  class="fadeIn fourth" style="padding: 20px 55px;">
+                <input id="login" type="button" value="تسجيل الدخول" class="fadeIn fourth" style="padding: 20px 55px;">
+            </div>
+
+            <table class="table table-striped fadeIn second">
+                <!--Table head-->
+                <thead>
+                    <tr>
+                        <th>النسخة العادية</th>
+                        <th>النسخة الذهبية</th>
+                        <th></th>
+                    </tr>
+                </thead>
+                <!--Table head-->
+                <!--Table body-->
+                <tbody>
+                    <tr>
+                        <td>&#9989;</td>
+                        <td>&#9989;</td>
+                        <td>إزالة كافة الإعلانات</td>
+                    </tr>
+                    <tr>
+                        <td></td>
+                        <td>&#9989;</td>
+                        <td>تفعيل الوضع الليلي</td>
+                    </tr>
+                    <tr>
+                        <td></td>
+                        <td>&#9989;</td>
+                        <td>تحميل جميع حلقات الموسم دفعة واحدة</td>
+                    </tr>
+                    <tr>
+                        <td></td>
+                        <td>&#9989;</td>
+                        <td>حفظ آخر حلقة تمت مشاهدتها </td>
+                    </tr>
+                    <tr>
+                        <td></td>
+                        <td>&#9989;</td>
+                        <td>الرجوع إلى آخر حلقة تمت مشاهدتها مع الوقت بالضبط</td>
+                    </tr>
+                    <tr>
+                        <td></td>
+                        <td>&#9989;</td>
+                        <td>إمكانية إظهار رابط التحميل</td>
+                    </tr>
+                    <tr>
+                        <td></td>
+                        <td>&#9989;</td>
+                        <td>الإنتقال السريع بين حلقات المسلسل</td>
+                    </tr>
+                    <tr>
+                        <td colspan="3"><h5 lang="ar" dir="rtl">تم إطلاق النسخة الذهبية, قوموا بزيارة صفحتنا على <a href="https://www.facebook.com/egybestenhancer/" target="_blank">الفيسبوك</a></h5></td>
+                    </tr>
+
+
+                </tbody>
+                <!--Table body-->
+            </table>
+            
+
+            <!-- Not Registered? -->
+            <div id="formFooter-login">
+                
+            </div>
+
+        </div>
+
+        <!-- Premium Dashboard-->
+        
+        <div id="dashboard_premium">
+            <div class="floatRight">
+                <h5 class="fadeIn first"><span>!</span><span id="username_premium" style="color: #ff5858;"></span>
+                    ,مرحبا</h5>
+            </div>
+            <div class="floatLeft">
+                <h6 class="fadeIn first"><span style="color: #007bff;">نوع الحساب : </span><span id="accountType_premium"
+                        style="color: #ff5858;"></span></h6>
+            </div>
+            <div style="clear:both; float:left">
+                <h6 class="fadeIn first"><span style="color: #007bff;">رقم الحساب : </span><span id="accountNumber_premium"
+                        style="color: #ff5858;"></span></h6>
+            </div>
+            <div class="floatRight">
+                <h6 class="fadeIn first"><span style="color: #007bff;">عدد الأيام المتبقية في الإشتراك : </span><span id="account_daysleft"
+                        style="color: #ff5858;"></span><span style="color: #ff5858;"> يوم</span></h6>
+            </div>
+            <div class="fadeIn third" style="clear: both;"><hr><h4>آخر الحلقات المشاهدة</h4></div>
+            <!--Episodes Table-->
+            <div class=".table-responsive">
+                
+                <table id="episodesTable" class="table table-striped fadeIn second">
+                    <!--Table head-->
+                    <thead>
+                        <tr>
+                            <th>حذف المسلسل</th>
+                            <th>الوقت</th>
+                            <th>الحلقة</th>
+                            <th>المسلسل</th>
+                            <th>البوستر</th>
+                        </tr>
+                    </thead>
+                    <!--Table head-->
+                    <!--Table body-->
+                    <tbody>
+                        <tr>
+                            <td colspan=5>
+                                <!-- Episodes Loading Spinner-->
+                                <div id="episodesLoading" class="lds-ellipsis">
+                                    <div></div>
+                                    <div></div>
+                                    <div></div>
+                                    <div></div>
+                                </div>
+                            </td>
+                        </tr>
+    
+                    </tbody>
+                    <!--Table body-->
+                </table>
+            </div>
+            <!--Episodes Table End-->
+            <div class="fadeIn third"><hr><h4>المسلسلات و الأفلام المفضلة</h4></div>
+            <!--Favorites Table-->
+            <div class=".table-responsive">
+                <table id="favoritesTable" class="table table-striped fadeIn second">
+                    <!--Table head-->
+                    <thead>
+                        <tr>
+                            <th>حذف من المفضلة</th>
+                            <th>المسلسل</th>
+                            <th>البوستر</th>
+                        </tr>
+                    </thead>
+                    <!--Table head-->
+                    <!--Table body-->
+                    <tbody>
+                        <tr>
+                            <td colspan=5>
+                                <!-- Favorites Loading Spinner-->
+                                <div id="favoritesLoading" class="lds-ellipsis">
+                                    <div></div>
+                                    <div></div>
+                                    <div></div>
+                                    <div></div>
+                                </div>
+                            </td>
+                        </tr>
+    
+                    </tbody>
+                    <!--Table body-->
+                </table>
+            </div>
+            <!--Favorites Table End-->
+            <!-- Admin Panel-->
+                <div id="adminPanel">
+                    <div class="fadeIn third"><hr><h4>لوحة تحكم المدير</h4><hr></div>
+
+                    <div class="fadeIn third"><h5>إحصائيات</h5></div>
+                    <h6 dir="rtl" lang="ar" class="fadeIn first" style="display: inline-block;">
+                        العضويات الذهبية : <span id="premium_count" style="color: #ff5858;"></span>
+                    </h6>
+                    <h6 dir="rtl" lang="ar" class="fadeIn first" style="display: inline-block;">
+                        العضويات العادية : <span id="regular_count" style="color: #ff5858;"></span>
+                    </h6>
+                    <h6 dir="rtl" lang="ar" class="fadeIn first" style="display: inline-block;">
+                        المدراء : <span id="admins_count" style="color: #ff5858;"></span>
+                    </h6>
+                    <div><hr></div>
+                    <div class="fadeIn third"><h6>تفعيل العضوية الذهبية</h6></div>
+                    <!-- Set Someone Premium Form -->
+                    <form id="formSetPremium">
+                        <div class="form-group">
+                            <input type="text" id="userid_setpremium" class="fadeIn third" name="id" placeholder="رقم العضوية" required> 
+                            <input type="text" id="maxsessions_setpremium" class="fadeIn third" name="maxsessions" placeholder="عدد الأجهزة" required>
+                        </div>
+                        <input type="submit" class="fadeIn fourth" value="تفعيل العضوية الذهبية">
+                    </form>
+                    <!-- Set Someone Premium Form End -->
+                    <div><hr></div>
+                    <div class="fadeIn third"><h6>إرجاع حساب إلى عادي</h6></div>
+                    <!-- Set Someone Regular Form -->
+                    <form id="formSetRegular">
+                        <div class="form-group">
+                            <input type="text" id="userid_setregular" class="fadeIn third" name="id" placeholder="رقم العضوية" required>
+                        </div>
+                        <input type="submit" class="fadeIn fourth" value="إرجاع الحساب إلى عادي">
+                    </form>
+                    <!-- Set Someone Regular Form End -->
+                    <div><hr></div>
+                    <div class="fadeIn third"><h6>معرفة نوع حساب</h6></div>
+                    <!-- Find if Someone is Premium Form -->
+                    <form id="formGetPremium">
+                        <div class="form-group">
+                            <input type="text" id="userid_getpremium" class="fadeIn third" name="id" placeholder="رقم العضوية" required>
+                        </div>
+                        <input type="submit" class="fadeIn fourth" value="معرفة نوع الحساب">
+                    </form>
+                    <!-- Find if Someone is Premium Form End -->
+                    <div><hr></div>
+                    <div class="fadeIn third"><h6>الطلبات</h6></div>
+                    <!-- Orders -->
+                    <form id="orders">
+                            <table id="ordersTable" class="table table-striped fadeIn second">
+                                    <!--Table head-->
+                                    <thead>
+                                        <tr>
+                                            <th>وصل الدفع</th>
+                                            <th>رقم الهاتف</th>
+                                            <th>اللقب</th>
+                                            <th>الإسم</th>
+                                            <th>رقم العضوية</th>
+                                        </tr>
+                                    </thead>
+                                    <!--Table head-->
+                                    <!--Table body-->
+                                    <tbody>
+                                    </tbody>
+                                    <!--Table body-->
+                            </table>
+                    </form>
+                    <!-- Orders End -->
+                </div>
+            <!-- Admin Panel End-->
+            <!-- Logout -->
+            <div id="formFooter-dashboard" class="fadeIn third">
+                <a id="logout" class="underlineHover" href="#">تسجيل الخروج</a>
+            </div>
+        </div>
+
+        <!-- Regular Dashboard-->
+        <div id="dashboard_regular">
+            <div class="floatRight">
+                <h5 class="fadeIn first"><span>!</span><span id="username_regular" style="color: #ff5858;"></span>
+                    ,مرحبا</h5>
+            </div>
+            <div class="floatLeft">
+                <h6 class="fadeIn first"><span style="color: #007bff;">نوع الحساب : </span><span id="accountType_regular"
+                        style="color: #ff5858;"></span></h6>
+            </div>
+            <div style="clear:both; float:left">
+                <h6 class="fadeIn first"><span style="color: #007bff;">رقم الحساب : </span><span id="accountNumber_regular"
+                        style="color: #ff5858;"></span></h6>
+            </div>
+
+            <table id="premiumAdvTable" class="table table-striped fadeIn second">
+                <!--Table head-->
+                <thead>
+                    <tr>
+                        <th>النسخة العادية</th>
+                        <th>النسخة الذهبية</th>
+                        <th></th>
+                    </tr>
+                </thead>
+                <!--Table head-->
+                <!--Table body-->
+                <tbody>
+                    <tr>
+                        <td>&#9989;</td>
+                        <td>&#9989;</td>
+                        <td>إزالة كافة الإعلانات</td>
+                    </tr>
+                    <tr>
+                        <td></td>
+                        <td>&#9989;</td>
+                        <td>تفعيل الوضع الليلي</td>
+                    </tr>
+                    <tr>
+                        <td></td>
+                        <td>&#9989;</td>
+                        <td>تحميل جميع حلقات الموسم دفعة واحدة</td>
+                    </tr>
+                    <tr>
+                        <td></td>
+                        <td>&#9989;</td>
+                        <td>حفظ آخر حلقة تمت مشاهدتها </td>
+                    </tr>
+                    <tr>
+                        <td></td>
+                        <td>&#9989;</td>
+                        <td>الرجوع إلى آخر حلقة تمت مشاهدتها مع الوقت بالضبط</td>
+                    </tr>
+                    <tr>
+                        <td></td>
+                        <td>&#9989;</td>
+                        <td>إمكانية إظهار رابط التحميل</td>
+                    </tr>
+                    <tr>
+                        <td></td>
+                        <td>&#9989;</td>
+                        <td>الإنتقال السريع بين حلقات المسلسل</td>
+                    </tr>
+                    <tr>
+                        <td></td>
+                        <td>
+                            <a id="buyButton" class="btn btn-info btn-lg">
+                                شراء<i class="fa fa-shopping-cart"></i>
+                            </a>
+                        </td>
+                        <th></th>
+                    </tr>
+
+
+                </tbody>
+                <!--Table body-->
+            </table>
+
+            <!-- Buy Window-->
+            <table id="buyTable" class="table tg table-striped fadeIn second" style="display: none;">
+                    <!-- CCP-->
+                    <tr>
+                        <th colspan="3" style="padding-bottom: 20px;"><img src="ccp.png" width="64" height="64"></th>
+                        <th class="tg-0pky">طريقة الدفع</th>
+                    </tr>
+                    <tr>
+                        <td>المفتاح</td>
+                        <td>رقم الحساب<br></td>
+                        <td>الإسم</td>
+                        <td>اللقب</td>
+                    </tr>
+                    <tr>
+                        <td>49</td>
+                        <td>0020947073</td>
+                        <td>فيصل</td>
+                        <td>غول</td>
+                    </tr>
+                    <tr>
+                        <td colspan="4"><h5>سعر الخدمة : 500دج/6 أشهر</h5></td>
+                    </tr>
+                    <tr>
+                        <td colspan="4">
+                            <div id="paymentSlip" class="fadeIn second">
+                                <img id="paymentSlipImg" width="100" height="100"/>
+                                <br>
+                                <input id="delPayment" type="button" value="إعادة رفع وصل الدفع">
+                            </div>
+                            <!-- Payment Slip Upload Form-->
+                            <form id="formPaymentSlip" method="post" enctype="multipart/form-data" class="fadeIn second">
+                                <input type="file" accept="image/*" name="paymentImg">
+                                <input type="submit" value="إرسال وصل الدفع">
+                            </form>
+                            <!-- Upload Loading Spinner-->
+                            <div id="uploadLoading" style="display: none;">
+                                <h6 style>...جاري رفع الملف</h6>
+                                <div class="lds-ellipsis" >
+                                    <div></div>
+                                    <div></div>
+                                    <div></div>
+                                    <div></div>
+                                </div>
+                            </div>
+                            <!-- Payment Slip Upload Form End-->
+                        </td>
+                    </tr>
+                    <tr>
+                            <td colspan="4"><h6 dir="rtl" lang="ar" style="font-weight: bold">ستصلك رسالة نصية SMS بعد التحقق من وصل الدفع و تفعيل النسخة الذهبية في حسابك, شكرا لك لإستعمالك خدماتنا!</h6></td>
+                    </tr> 
+                    <tr>
+                            <td colspan="4"><hr></td>
+                    </tr> 
+                    <!-- PayPal-->
+                    <tr>
+                        <th colspan="3" style="padding-bottom: 20px;"><img src="paypal.png" width="64" height="64"></th>
+                        <th class="tg-0lax">طريقة الدفع</th>
+                    </tr>
+                    <tr>
+                        <td class="tg-0lax" colspan="4">! قريبا</td>
+                    </tr>
+            </table>
+            <!-- Buy Window End-->
+
+            <!-- Logout -->
+            <div id="formFooter-dashboard" class="fadeIn fourth">
+                <a id="logout" class="underlineHover" href="#">تسجيل الخروج</a>
+            </div>
+        </div>
+
+
+        <!-- Main Loading Spinner-->
+        <div id="mainLoading" class="lds-ellipsis">
+            <div></div>
+            <div></div>
+            <div></div>
+            <div></div>
+        </div>
+
+        <!-- Login Loading Spinner-->
+            <div id="loginLoading" class="lds-roller" style="display: none;">
+                    <div></div>
+                    <div></div>
+                    <div></div>
+                    <div></div>
+                    <div></div>
+                    <div></div>
+                    <div></div>
+                    <div></div>
+            </div>
+
+
+    </div>
+</body>
+
+</html>

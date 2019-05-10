@@ -17,6 +17,9 @@ app.use('/api',Routes);
 
 app.use(express.static(__dirname + '/files'));
 
+app.get("/dashboard",function(req, res){
+    res.status(200).sendFile(path.join(__dirname+'/files/dashboard.html'));
+});
 app.get("/login",function(req, res){
     res.status(200).sendFile(path.join(__dirname+'/files/login.html'));
 });

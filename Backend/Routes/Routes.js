@@ -95,6 +95,7 @@ users.post('/login', function(req, res) {
 
 users.post('/addpharmacy', function(req, res) {
     var appData = {};
+    var token = req.body.token || req.query.token;
     var pharmacy = {
         "cityId" : req.body.cityId,
         "name" : req.body.name,
@@ -117,27 +118,38 @@ users.post('/addpharmacy', function(req, res) {
                         appData["data"] = "خطأ في الإتصال بقاعدة البيانات, سنقوم بحل المشكلة قريبا, نعتذر على الإزعاج";
                         res.status(200).json(appData);
                     } else {
-                        connection.query('SELECT isadmin FROM users WHERE id=(SELECT users.id FROM users WHERE email=?)', [email], function(err, rows, fields) {
+                        connection.query('SELECT cityId FROM moderators WHERE userid=(SELECT users.id FROM users WHERE email=?)', [email], function(err, rows, fields) {
                             if (err) {
                                 appData["error"] = 1;
                                 appData["data"] = "خطأ في الإتصال بقاعدة البيانات, سنقوم بحل المشكلة قريبا, نعتذر على الإزعاج";
                                 res.status(200).json(appData);
                             }else{
-                                if(rows.length > 0 && rows[0].isadmin == 1){ 
-                                    connection.query('INSERT INTO pharmacy SET ?', pharmacy, function(err, UsersRows, fields) {
-                                        if (err) {
-                                            appData["error"] = 1;
-                                            appData["data"] = "خطأ في الإتصال بقاعدة البيانات, سنقوم بحل المشكلة قريبا, نعتذر على الإزعاج";
-                                            res.status(200).json(appData);
-                                        } else {
-                                            appData["error"] = 0;
-                                            appData["data"] = "تم إضافة الصيدلية بنجاح";
-                                            res.status(200).json(appData);
-                                        }
+                                if(rows.length > 0){ 
+                                    var hasPermissions = false;
+                                    rows.forEach(row => {
+                                        if(row.cityId == pharmacy.cityId)
+                                            hasPermissions = true;
                                     });
+                                    if(hasPermissions){
+                                        connection.query('INSERT INTO pharmacy SET ?', pharmacy, function(err, UsersRows, fields) {
+                                            if (err) {
+                                                appData["error"] = 1;
+                                                appData["data"] = "خطأ في الإتصال بقاعدة البيانات, سنقوم بحل المشكلة قريبا, نعتذر على الإزعاج";
+                                                res.status(200).json(appData);
+                                            } else {
+                                                appData["error"] = 0;
+                                                appData["data"] = "تم إضافة الصيدلية بنجاح";
+                                                res.status(200).json(appData);
+                                            }
+                                        });
+                                    }else{
+                                        appData["error"] = 1;
+                                        appData["data"] = "ليست لديك أي صلاحيات في هذه المدينة";
+                                        res.status(200).json(appData);
+                                    }
                                 }else{
                                     appData["error"] = 1;
-                                    appData["data"] = "Unauthorized access";
+                                    appData["data"] = "ليست لديك أي صلاحيات في هذه المدينة";
                                     res.status(200).json(appData);
                                 }
                             }

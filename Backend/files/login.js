@@ -15,7 +15,7 @@ $(document).ready(function (){
           data : $('#formLogin').serialize(),
           success: function(response){
               if(response.error == 0 && response.token){ // No error
-                  window.localStorage.setItem('token', response.token);
+                  window.localStorage.setItem('PharmacyToken', response.token);
                   window.location.replace('./dashboard');
               }else{
                 alert(JSON.stringify(response.data));
