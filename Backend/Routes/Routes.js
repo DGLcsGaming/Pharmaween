@@ -72,7 +72,7 @@ users.post('/login', function(req, res) {
                 } else {
                     if (UsersRows.length > 0) {
                         if (bcrypt.compareSync(password, UsersRows[0].password)) {
-                            let token = jwt.sign({id: UsersRows[0].id, email: UsersRows[0].email, first_name: UsersRows[0].first_name, last_name: UsersRows[0].last_name, last_name: UsersRows[0].tel}, process.env.SECRET_KEY);
+                            let token = jwt.sign({id: UsersRows[0].id, email: UsersRows[0].email, first_name: UsersRows[0].first_name, last_name: UsersRows[0].last_name, tel: UsersRows[0].tel}, process.env.SECRET_KEY);
                             appData.error = 0;
                             appData["token"] = token;
                             res.status(200).json(appData);

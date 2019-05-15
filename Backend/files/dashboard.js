@@ -1,345 +1,152 @@
-var token = window.localStorage.getItem('token');
-var isadmin;
+
 function checkLogin() {
     return new Promise((resolve, reject) => {
-       window.localStorage.getItem('PharmacyToken');
+        var token = window.localStorage.getItem('PharmacyToken');
+        if(token){
+            var tokenDecoded = JSON.parse(atob(token.split('.')[1]));
+            resolve(tokenDecoded);
+        }else{
+            reject();
+        }
 
-                            id = data.egybest_id;
-                            token = data.egybest_token;
-                            first_name = data.egybest_first_name;
-                            last_name = data.egybest_last_name;
-                            email = data.egybest_email;
+        
     });
 }
 
 
 $(document).ready(function (){
-
-    loading();
-    checkLogin().then(function(isLoggedIn){
-        if(isLoggedIn == false){ // Not Logged in
-            loginView();
-        }else{ // Already logged in
-            isPremium().then(function(premium){
-                if(premium == 1){ // premium
-                    DashboardViewPremium();
-                }else{
-                    DashboardViewRegular();
-                }
-            }).catch(function (error){
-                alert("خطأ في الإتصال بالسيرفر, سنقوم بحل المشكلة قريبا, نعتذر على الإزعاج, إذا إستمر الوضع هكذا قم بتحديث الإضافة");    
-                window.close();
-            });
-        }   
-    }).then(function (){
     ///////////////// Click and Submit Events //////////////////
-    $(document).on('click', '#buyButton', function (e) {
-        /*
-        $.ajax({
-            url: HOST+'/users/getpaymentimg',
-            type: 'POST',
-            data: JSON.stringify({token: token,email: email}),
-            contentType: 'application/json; charset=utf-8',
-            success: function(response){
-                $('#premiumAdvTable').hide();
-                $('#buyTable').show();
-                if(response.error == 0){
-                    $('#paymentSlipImg').attr('src', HOST+'/'+response.img);
-                    $('#paymentSlip').show();
-                    $('#formPaymentSlip').hide(); // hide upload form
-                }else{
-                    $('#paymentSlip').hide();
-                    $('#formPaymentSlip').show(); 
-                }
-            },
-            error : function(err){
-                alert(err);
-            }
-        });
-        */
-       alert('سيتم إطلاق النسخة المدفوعة قريبا, سيكون ثمن الإشتراك 500دج فقط لمدة ستة أشهر!');
-        
-       
-        
-   });
-   
-   $(document).on('click', '#login', function() {
-        chrome.tabs.create({ url: HOST+'/login' }, function(tab) {
-            chrome.tabs.update(tab.id, {active: true});
-            window.close();
-        });
+    $(document).on('click', '#login', function() {
+        window.location.replace('./login');
     });
     $(document).on('click', '#register', function() {
-        chrome.tabs.create({ url: HOST+'/register' }, function(tab) {
-            chrome.tabs.update(tab.id, {active: true});
-            window.close();
-        });
+        window.location.replace('./register');
     });
     $(document).on('click', '#logout', function() {
         logout();
     });
-    $(document).on('click', '#delPayment', function() {
-        delPayment();
-    });
-    
+    checkLogin().then(function(tokenDecoded){
+        DashboardView(tokenDecoded);
+        $(document).on('submit', '#formSetPremium', function(e){
+            e.preventDefault();
+            e.stopImmediatePropagation();
 
-    $("#formPaymentSlip").on('submit',(function(e) {
-        e.preventDefault();
-        e.stopImmediatePropagation();
-
-        $('#formPaymentSlip').hide();
-        $('#uploadLoading').show();
-        $('#paymentSlip').hide();
-
-        var formData = new FormData(this);
-        formData.append("token", token);
-        formData.append("email", email);
-        formData.append("id", id);
+            var submitButton = $(this).find(':submit');
+            submitButton.prop('disabled', true);
 
         $.ajax({
-         url: HOST+"/users/uploadpayment",
-         type: "POST",
-         data:  formData,
-         headers: {
-            'token':token,
-            'email':email,
-            'id':id
-        },
-         contentType: false,
-         cache: false,
-         processData:false,
-         success: function(data)
-         {
-            $('#uploadLoading').hide();
-          if(data=='invalid')
-          {
-            $('#formPaymentSlip').show();
-           alert('ملف غير صالح, يرجى رفع صورة صحيحة');
-          }
-          else
-          {
-            if(data.error == 0){
-                alert('تم رفع الصورة بنجاح');
-                $("#formPaymentSlip")[0].reset(); 
-
-                $.ajax({
-                    url: HOST+'/users/getpaymentimg',
-                    type: 'POST',
-                    data: JSON.stringify({token: token,email: email}),
-                    contentType: 'application/json; charset=utf-8',
-                    success: function(response){
-                        if(response.error == 0){
-                            $('#paymentSlipImg').attr('src', HOST+'/'+response.img);
-                            $('#paymentSlip').show();
-                        }else{
-                            alert(JSON.stringify(response.data));
-                        }
-                    },
-                    error : function(err){
-                        alert(err);
-                    }
-                  });
-
-            }else{
-                $('#formPaymentSlip').show();
-                alert(JSON.stringify(data.data));
-            }
-          }
-         },
-         error: function(e) 
-         {
-            $('#uploadLoading').hide();
-            $('#formPaymentSlip').show();
-            alert("خطأ في رفع الصورة. ");
-            alert(JSON.stringify(e));
-            }          
-         });
-    }));
-
-    $(document).on('submit', '#formSetPremium', function(e){
-        e.preventDefault();
-        e.stopImmediatePropagation();
-
-        var submitButton = $(this).find(':submit');
-        submitButton.prop('disabled', true);
-
-       $.ajax({
-          url: HOST+'/users/setpremium',
-          type: 'POST',
-          data : $('#formSetPremium').serialize() + "&token="+ token + "&email=" + email,
-          success: function(response){
-              if(response.error == 0){ // No error
-                  alert(response.data);
-                  $('#ordersTable > tbody > tr').filter(function(){
-                    return $(this).find('td:nth-child(5)').text() === $("#userid_setpremium").val();
-                  }).remove();
-              }else{
-                  alert(JSON.stringify(response.data));
-              }
-              $("#formSetPremium")[0].reset(); 
-          },
-          error: function() {
-             alert("خطأ في الإتصال بالسيرفر, سنقوم بحل المشكلة قريبا, نعتذر على الإزعاج, إذا إستمر الوضع هكذا قم بتحديث الإضافة");
-          },
-          complete: function(){
-            submitButton.prop('disabled', false);
-          }
-        });
-        
-        return false;
-    });
-
-    $(document).on('submit', '#formGetPremium', function(e){
-        e.preventDefault();
-        e.stopImmediatePropagation();
-
-        var submitButton = $(this).find(':submit');
-        submitButton.prop('disabled', true);
-
-       $.ajax({
-          url: HOST+'/users/getpremium',
-          type: 'POST',
-          data : $('#formGetPremium').serialize() + "&token="+ token + "&email=" + email,
-          success: function(response){
-              if(response.error == 0){ // No error
-                  alert("First Name: "+response.first_name+"\n"+
-                        "Last Name: "+response.last_name+"\n"+
-                        "Email: "+response.email+"\n"+
-                        "Premium: "+response.ispremium+"\n"+
-                        "Premium End: "+response.premiumend+"\n"+
-                        "Days Left: "+response.daysleft);
-              }else{
-                  alert(JSON.stringify(response.data));
-              }
-              $("#formGetPremium")[0].reset(); 
-          },
-          error: function() {
-             alert("خطأ في الإتصال بالسيرفر, سنقوم بحل المشكلة قريبا, نعتذر على الإزعاج, إذا إستمر الوضع هكذا قم بتحديث الإضافة");
-          },
-          complete: function(){
-            submitButton.prop('disabled', false);
-          }
-        });
-        
-        return false;
-    });
-
-    $(document).on('submit', '#formSetRegular', function(e){
-        e.preventDefault();
-        e.stopImmediatePropagation();
-
-        var submitButton = $(this).find(':submit');
-        submitButton.prop('disabled', true);
-
-       $.ajax({
-          url: HOST+'/users/setregular',
-          type: 'POST',
-          data : $('#formSetRegular').serialize() + "&token="+ token + "&email=" + email,
-          success: function(response){
-            $("#formSetRegular")[0].reset(); 
-              if(response.error == 0){ // No error
-                  alert(response.data);
-              }else{
-                  alert(JSON.stringify(response.data));
-              }
-          },
-          error: function() {
-             alert("خطأ في الإتصال بالسيرفر, سنقوم بحل المشكلة قريبا, نعتذر على الإزعاج, إذا إستمر الوضع هكذا قم بتحديث الإضافة");
-          },
-          complete: function(){
-            submitButton.prop('disabled', false);
-          }
-        });
-        
-        return false;
-    });
-
-  
-    ///////////////////////////////////////////////
-    }).catch(function(e){
-        alert("خطأ في الإتصال بالسيرفر, سنقوم بحل المشكلة قريبا, نعتذر على الإزعاج, إذا إستمر الوضع هكذا قم بتحديث الإضافة");
-        window.close();
-    });
-});
-
-function loading(){
-    $('#formContent-login').hide();
-    $('#formContent-signup').hide();
-    $('#dashboard_premium').hide();
-    $('#dashboard_regular').hide();
-    $('#loginLoading').hide();
-    $('#mainLoading').show();
-}
-function loginView(){
-    $('#formContent-login').show();
-    $('#dashboard_premium').hide();
-    $('#dashboard_regular').hide();
-    $('#mainLoading').hide();
-    $('#loginLoading').hide();
-}
-
-async function DashboardViewPremium(){
-    $('#formContent-signup').hide();
-    $('#formContent-login').hide();
-    $('#dashboard_regular').hide();
-    $('#mainLoading').hide();
-    $('#loginLoading').hide();
-    $('#dashboard_premium').show();
-    await checkLogin();
-    // Update Username
-    $('#username_premium').text(first_name+' '+last_name);
-    $('#accountType_premium').text('ذهبي');
-    $('#accountNumber_premium').text('#'+id);
-    $('#account_daysleft').text(daysleft);
-    if(isadmin == 1){
-        $('#adminPanel').show();
-        $.ajax({
-            url: HOST+'/users/userscount',
+            url: HOST+'/users/setpremium',
             type: 'POST',
-            data : "token="+ token + "&email=" + email,
+            data : $('#formSetPremium').serialize() + "&token="+ token + "&email=" + email,
             success: function(response){
-                if(response.error == 0){ 
-                    $('#premium_count').text(response.premium);
-                    $('#regular_count').text(response.regular);
-                    $('#admins_count').text(response.admins);
+                if(response.error == 0){ // No error
+                    alert(response.data);
+                    $('#ordersTable > tbody > tr').filter(function(){
+                        return $(this).find('td:nth-child(5)').text() === $("#userid_setpremium").val();
+                    }).remove();
+                }else{
+                    alert(JSON.stringify(response.data));
+                }
+                $("#formSetPremium")[0].reset(); 
+            },
+            error: function() {
+                alert("خطأ في الإتصال بالسيرفر, سنقوم بحل المشكلة قريبا, نعتذر على الإزعاج, إذا إستمر الوضع هكذا قم بتحديث الإضافة");
+            },
+            complete: function(){
+                submitButton.prop('disabled', false);
+            }
+            });
+            
+            return false;
+        });
+
+        $(document).on('submit', '#formGetPremium', function(e){
+            e.preventDefault();
+            e.stopImmediatePropagation();
+
+            var submitButton = $(this).find(':submit');
+            submitButton.prop('disabled', true);
+
+        $.ajax({
+            url: HOST+'/users/getpremium',
+            type: 'POST',
+            data : $('#formGetPremium').serialize() + "&token="+ token + "&email=" + email,
+            success: function(response){
+                if(response.error == 0){ // No error
+                    alert("First Name: "+response.first_name+"\n"+
+                            "Last Name: "+response.last_name+"\n"+
+                            "Email: "+response.email+"\n"+
+                            "Premium: "+response.ispremium+"\n"+
+                            "Premium End: "+response.premiumend+"\n"+
+                            "Days Left: "+response.daysleft);
+                }else{
+                    alert(JSON.stringify(response.data));
+                }
+                $("#formGetPremium")[0].reset(); 
+            },
+            error: function() {
+                alert("خطأ في الإتصال بالسيرفر, سنقوم بحل المشكلة قريبا, نعتذر على الإزعاج, إذا إستمر الوضع هكذا قم بتحديث الإضافة");
+            },
+            complete: function(){
+                submitButton.prop('disabled', false);
+            }
+            });
+            
+            return false;
+        });
+
+        $(document).on('submit', '#formSetRegular', function(e){
+            e.preventDefault();
+            e.stopImmediatePropagation();
+
+            var submitButton = $(this).find(':submit');
+            submitButton.prop('disabled', true);
+
+        $.ajax({
+            url: HOST+'/users/setregular',
+            type: 'POST',
+            data : $('#formSetRegular').serialize() + "&token="+ token + "&email=" + email,
+            success: function(response){
+                $("#formSetRegular")[0].reset(); 
+                if(response.error == 0){ // No error
+                    alert(response.data);
                 }else{
                     alert(JSON.stringify(response.data));
                 }
             },
             error: function() {
-               alert("خطأ في الإتصال بالسيرفر, سنقوم بحل المشكلة قريبا, نعتذر على الإزعاج, إذا إستمر الوضع هكذا قم بتحديث الإضافة");
-            }
-        }); 
-        $.ajax({
-            url: HOST+'/users/getpaymentinfo',
-            type: 'POST',
-            data : "token="+ token + "&email=" + email,
-            success: function(response){
-                if(response.error == 0){ 
-                    for(var i = 0; i < response.data.length; i++){
-                        $('#ordersTable').find('tbody')
-                             .append($('<tr>')
-                                  .append($('<td>')
-                                  .append($('<a>').attr('href', HOST+"/"+response.data[i].paymentslip).attr('target', '_blank') //class newtab
-                                        .append($('<img>').attr('class', 'poster').attr('src', HOST+"/"+response.data[i].paymentslip))))
-                                  .append($('<td>').html(response.data[i].tel))
-                                  .append($('<td>').html(response.data[i].last_name))
-                                  .append($('<td>').html(response.data[i].first_name))
-                                  .append($('<td>').html(response.data[i].id))
-                              );
-                    }  
-                }else{
-                    console.log(JSON.stringify(response.data));
-                }
+                alert("خطأ في الإتصال بالسيرفر, سنقوم بحل المشكلة قريبا, نعتذر على الإزعاج, إذا إستمر الوضع هكذا قم بتحديث الإضافة");
             },
-            error: function() {
-               alert("خطأ في الإتصال بالسيرفر, سنقوم بحل المشكلة قريبا, نعتذر على الإزعاج, إذا إستمر الوضع هكذا قم بتحديث الإضافة");
+            complete: function(){
+                submitButton.prop('disabled', false);
             }
+            });
+            
+            return false;
         });
-    }else{
-        $('#adminPanel').hide();
-    }
-    // Populate episodes table
+        ///////////////////////////////////////////////
+    }).catch(function(){ // not logged in
+        loginView();
+    });
+});
+
+function loginView(){
+    $('#dashboard').hide();
+    $('#loginLoading').hide();
+    $('#formContent').show();
+}
+
+async function DashboardView(tokenDecoded){
+    $('#formContent').hide();
+    $('#dashboard').show();
+    await checkLogin();
+    // Update Username
+    $('#username').text(tokenDecoded.first_name+' '+tokenDecoded.last_name);
+    $('#accountType').text('');
+    $('#accountNumber').text('#'+tokenDecoded.id);
+    $('#account_daysleft').text('');
+
+     // Populate episodes table
     getEpisodes().then(function (data){
         $('#episodesTable').find('tbody').empty();
         for(var i = 0; i < data.length; i++){
@@ -421,58 +228,15 @@ async function DashboardViewPremium(){
             });
         });
     });
-    
+
     
     
 }
 
-async function DashboardViewRegular(){
-    $('#formContent-signup').hide();
-    $('#formContent-login').hide();
-    $('#dashboard_premium').hide();
-    $('#mainLoading').hide();
-    $('#loginLoading').hide();
-    $('#dashboard_regular').show();
-    await checkLogin();
-    // Update Username
-    $('#username_regular').text(first_name+' '+last_name);
-    $('#accountType_regular').text('عادي');
-    $('#accountNumber_regular').text('#'+id);
-    // Populate episodes table
-}
 
 function logout() {
-    if(token){
-        $.ajax({
-            url: HOST+'/users/logout',
-            type: 'POST',
-            data: JSON.stringify({token: token, email:email}),
-            contentType: 'application/json; charset=utf-8',
-            success: function(response){
-                if(response.error == 0){ // No error
-                    $('#episodesTable').find('tbody').empty();
-                    $('#favoritesTable').find('tbody').empty();
-                    chrome.storage.local.clear(function() {
-                        var error = chrome.runtime.lastError;
-                        if (error) {
-                            alert(error);
-                        }else{
-                            chrome.runtime.sendMessage({"type":"logout"});
-                            token = null;
-                            first_name = null;
-                            last_name = null;
-                            loginView();
-                        }
-                    });
-                }else{
-                    alert(JSON.stringify(response.data));
-                }
-            },
-            error: function(err){
-                alert(JSON.stringify(err));
-            }
-        });
-    }
+    window.localStorage.removeItem('PharmacyToken');
+    window.location.reload();
 }
 
 
