@@ -18,7 +18,7 @@ users.post('/register', function(req, res) {
         "first_name": req.body.first_name,
         "last_name": req.body.last_name,
         "email": req.body.email,
-        "tel": req.body.tel,
+        "tel": "0" + req.body.tel,
         "password": bcrypt.hashSync(req.body.password, null, null),
         "registerdate": new Date().toISOString().slice(0,10)
     };
@@ -72,7 +72,7 @@ users.post('/login', function(req, res) {
                 } else {
                     if (UsersRows.length > 0) {
                         if (bcrypt.compareSync(password, UsersRows[0].password)) {
-                            let token = jwt.sign({id: UsersRows[0].id, email: UsersRows[0].email, first_name: UsersRows[0].first_name, last_name: UsersRows[0].last_name, tel: UsersRows[0].tel}, process.env.SECRET_KEY);
+                            let token = jwt.sign({id: UsersRows[0].id, email: UsersRows[0].email, first_name: UsersRows[0].first_name, last_name: UsersRows[0].last_name, tel: UsersRows[0].tel, isadmin: UsersRows[0].isadmin}, process.env.SECRET_KEY);
                             appData.error = 0;
                             appData["token"] = token;
                             res.status(200).json(appData);
@@ -93,6 +93,7 @@ users.post('/login', function(req, res) {
     });
 });
 
+// Moderator
 users.post('/addpharmacy', function(req, res) {
     var appData = {};
     var token = req.body.token || req.query.token;
@@ -103,61 +104,66 @@ users.post('/addpharmacy', function(req, res) {
         "lat" : req.body.lat,
         "image" : req.body.image
     };
+    for(let i = 0; i < Object.keys(pharmacy).length; i++){
+        if(!pharmacy[Object.keys(pharmacy)[i]]){
+            appData["error"] = 1;
+            if(i==4)
+                appData["data"] = "Please send an "+ Object.keys(pharmacy)[i];
+            else
+                appData["data"] = "Please send a "+ Object.keys(pharmacy)[i];
+            res.status(200).json(appData);
+            return;
+        }
+    }
 
     if (token) {
         try {
             var decoded = jwt.verify(token, process.env.SECRET_KEY);
-            if(decoded.email != email){
-                appData["error"] = 1;
-                appData["data"] = "Unauthorized";
-                return res.status(200).json(appData);
-            }else{
-                database.connection.getConnection(function(err, connection) {
-                    if (err) {
-                        appData["error"] = 1;
-                        appData["data"] = "خطأ في الإتصال بقاعدة البيانات, سنقوم بحل المشكلة قريبا, نعتذر على الإزعاج";
-                        res.status(200).json(appData);
-                    } else {
-                        connection.query('SELECT cityId FROM moderators WHERE userid=(SELECT users.id FROM users WHERE email=?)', [email], function(err, rows, fields) {
-                            if (err) {
-                                appData["error"] = 1;
-                                appData["data"] = "خطأ في الإتصال بقاعدة البيانات, سنقوم بحل المشكلة قريبا, نعتذر على الإزعاج";
-                                res.status(200).json(appData);
-                            }else{
-                                if(rows.length > 0){ 
-                                    var hasPermissions = false;
-                                    rows.forEach(row => {
-                                        if(row.cityId == pharmacy.cityId)
-                                            hasPermissions = true;
+            database.connection.getConnection(function(err, connection) {
+                if (err) {
+                    appData["error"] = 1;
+                    appData["data"] = "خطأ في الإتصال بقاعدة البيانات, سنقوم بحل المشكلة قريبا, نعتذر على الإزعاج";
+                    res.status(200).json(appData);
+                } else {
+                    connection.query('SELECT cityId FROM moderators WHERE userid=(SELECT users.id FROM users WHERE email=?)', [decoded.email], function(err, rows, fields) {
+                        if (err) {
+                            appData["error"] = 1;
+                            appData["data"] = "خطأ في الإتصال بقاعدة البيانات, سنقوم بحل المشكلة قريبا, نعتذر على الإزعاج";
+                            res.status(200).json(appData);
+                        }else{
+                            if(rows.length > 0 || decoded.isadmin){ 
+                                var hasPermissions = false;
+                                rows.forEach(row => {
+                                    if(row.cityId == pharmacy.cityId)
+                                        hasPermissions = true;
+                                });
+                                if(hasPermissions || decoded.isadmin){
+                                    connection.query('INSERT INTO pharmacy SET ?', pharmacy, function(err, UsersRows, fields) {
+                                        if (err) {
+                                            appData["error"] = 1;
+                                            appData["data"] = "خطأ في الإتصال بقاعدة البيانات, سنقوم بحل المشكلة قريبا, نعتذر على الإزعاج";
+                                            res.status(200).json(appData);
+                                        } else {
+                                            appData["error"] = 0;
+                                            appData["data"] = "تم إضافة الصيدلية بنجاح";
+                                            res.status(200).json(appData);
+                                        }
                                     });
-                                    if(hasPermissions){
-                                        connection.query('INSERT INTO pharmacy SET ?', pharmacy, function(err, UsersRows, fields) {
-                                            if (err) {
-                                                appData["error"] = 1;
-                                                appData["data"] = "خطأ في الإتصال بقاعدة البيانات, سنقوم بحل المشكلة قريبا, نعتذر على الإزعاج";
-                                                res.status(200).json(appData);
-                                            } else {
-                                                appData["error"] = 0;
-                                                appData["data"] = "تم إضافة الصيدلية بنجاح";
-                                                res.status(200).json(appData);
-                                            }
-                                        });
-                                    }else{
-                                        appData["error"] = 1;
-                                        appData["data"] = "ليست لديك أي صلاحيات في هذه المدينة";
-                                        res.status(200).json(appData);
-                                    }
                                 }else{
                                     appData["error"] = 1;
                                     appData["data"] = "ليست لديك أي صلاحيات في هذه المدينة";
                                     res.status(200).json(appData);
                                 }
+                            }else{
+                                appData["error"] = 1;
+                                appData["data"] = "ليست لديك أي صلاحيات في هذه المدينة";
+                                res.status(200).json(appData);
                             }
-                        });
-                        connection.release();
-                    }
-                });
-            }
+                        }
+                    });
+                    connection.release();
+                }
+            });
         } catch (err) {
             appData["error"] = 1;
             appData["data"] = "Token is invalid";
@@ -170,6 +176,160 @@ users.post('/addpharmacy', function(req, res) {
     }
 });
 
+users.post('/delpharmacy', function (req, res) {
+    var appData = {};
+    var token = req.body.token || req.query.token;
+    var pharmacyId = req.body.pharmacyId || req.query.pharmacyId;
+    if(!pharmacyId){
+        appData["error"] = 1;
+        appData["data"] = "Please send a pharmacyId";
+        res.status(200).json(appData);
+        return;
+    }
+
+    if (token) {
+        try {
+            var decoded = jwt.verify(token, process.env.SECRET_KEY);
+            database.connection.getConnection(function (err, connection) {
+                if (err) {
+                    appData["error"] = 1;
+                    appData["data"] = "خطأ في الإتصال بقاعدة البيانات, سنقوم بحل المشكلة قريبا, نعتذر على الإزعاج";
+                    res.status(200).json(appData);
+                } else {
+                    connection.query('SELECT cityId FROM moderators WHERE userid=(SELECT users.id FROM users WHERE email=?)', [decoded.email], function (err, ModRows, fields) {
+                        if (err) {
+                            appData["error"] = 1;
+                            appData["data"] = "خطأ في الإتصال بقاعدة البيانات, سنقوم بحل المشكلة قريبا, نعتذر على الإزعاج";
+                            res.status(200).json(appData);
+                        } else {
+                            if (ModRows.length > 0 || decoded.isadmin) {
+                                connection.query('SELECT cityId FROM pharmacy WHERE id=?', [pharmacyId], function (err, PharmRows, fields) {
+                                    if (err) {
+                                        appData["error"] = 1;
+                                        appData["data"] = "خطأ في الإتصال بقاعدة البيانات, سنقوم بحل المشكلة قريبا, نعتذر على الإزعاج";
+                                        res.status(200).json(appData);
+                                    } else {
+                                        if (PharmRows.length > 0) {
+                                            var hasPermissions = false;
+                                            ModRows.forEach(ModRow => {
+                                                if (ModRow.cityId == PharmRows[0].cityId)
+                                                    hasPermissions = true;
+                                            });
+                                            if (hasPermissions || decoded.isadmin) {
+                                                connection.query('DELETE FROM pharmacy WHERE id=?', [pharmacyId], function (err, UsersRows, fields) {
+                                                    if (err) {
+                                                        appData["error"] = 1;
+                                                        appData["data"] = "خطأ في الإتصال بقاعدة البيانات, سنقوم بحل المشكلة قريبا, نعتذر على الإزعاج";
+                                                        res.status(200).json(appData);
+                                                    } else {
+                                                        appData["error"] = 0;
+                                                        appData["data"] = "تم إزالة الصيدلية بنجاح";
+                                                        res.status(200).json(appData);
+                                                    }
+                                                });
+                                            } else {
+                                                appData["error"] = 1;
+                                                appData["data"] = "ليست لديك أي صلاحيات في هذه المدينة";
+                                                res.status(200).json(appData);
+                                            }
+                                        }else{
+                                            appData["error"] = 1;
+                                            appData["data"] = "لا يوجد بيانات";
+                                            res.status(200).json(appData);
+                                        }
+                                    }
+                                });
+                            } else {
+                                appData["error"] = 1;
+                                appData["data"] = "ليست لديك أي صلاحيات في هذه المدينة";
+                                res.status(200).json(appData);
+                            }
+                        }
+                    });
+                    connection.release();
+                }
+            });
+        } catch (err) {
+            appData["error"] = 1;
+            appData["data"] = "Token is invalid";
+            res.status(200).json(appData);
+        }
+    } else {
+        appData["error"] = 1;
+        appData["data"] = "Please send a token";
+        res.status(200).json(appData);
+    }
+});
+
+users.post('/addshift', function (req, res) {
+    var appData = {};
+    var token = req.body.token || req.query.token;
+    var shift = {
+        "pharmacyId": req.body.pharmacyId,
+        "date": req.body.date
+    };
+
+    if (token) {
+        try {
+            var decoded = jwt.verify(token, process.env.SECRET_KEY);
+            database.connection.getConnection(function (err, connection) {
+                if (err) {
+                    appData["error"] = 1;
+                    appData["data"] = "خطأ في الإتصال بقاعدة البيانات, سنقوم بحل المشكلة قريبا, نعتذر على الإزعاج";
+                    res.status(200).json(appData);
+                } else {
+                    connection.query('SELECT cityId FROM moderators WHERE userid=(SELECT users.id FROM users WHERE email=?)', [decoded.email], function (err, rows, fields) {
+                        if (err) {
+                            appData["error"] = 1;
+                            appData["data"] = "خطأ في الإتصال بقاعدة البيانات, سنقوم بحل المشكلة قريبا, نعتذر على الإزعاج";
+                            res.status(200).json(appData);
+                        } else {
+                            if (rows.length > 0 || decoded.isadmin) {
+                                var hasPermissions = false;
+                                rows.forEach(row => {
+                                    if (row.cityId == pharmacy.cityId)
+                                        hasPermissions = true;
+                                });
+                                if (hasPermissions || decoded.isadmin) {
+                                    connection.query('INSERT INTO pharmacy SET ?', pharmacy, function (err, UsersRows, fields) {
+                                        if (err) {
+                                            appData["error"] = 1;
+                                            appData["data"] = "خطأ في الإتصال بقاعدة البيانات, سنقوم بحل المشكلة قريبا, نعتذر على الإزعاج";
+                                            res.status(200).json(appData);
+                                        } else {
+                                            appData["error"] = 0;
+                                            appData["data"] = "تم إضافة الصيدلية بنجاح";
+                                            res.status(200).json(appData);
+                                        }
+                                    });
+                                } else {
+                                    appData["error"] = 1;
+                                    appData["data"] = "ليست لديك أي صلاحيات في هذه المدينة";
+                                    res.status(200).json(appData);
+                                }
+                            } else {
+                                appData["error"] = 1;
+                                appData["data"] = "ليست لديك أي صلاحيات في هذه المدينة";
+                                res.status(200).json(appData);
+                            }
+                        }
+                    });
+                    connection.release();
+                }
+            });
+        } catch (err) {
+            appData["error"] = 1;
+            appData["data"] = "Token is invalid";
+            res.status(200).json(appData);
+        }
+    } else {
+        appData["error"] = 1;
+        appData["data"] = "Please send a token";
+        res.status(200).json(appData);
+    }
+});
+
+// Admin
 users.post('/setmoderator', function(req, res) {
     var appData = {};
     var token = req.body.token || req.headers['token'] || req.query.token;
