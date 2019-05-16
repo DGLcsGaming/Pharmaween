@@ -125,7 +125,7 @@ users.post('/addpharmacy', function(req, res) {
                     appData["data"] = "خطأ في الإتصال بقاعدة البيانات, سنقوم بحل المشكلة قريبا, نعتذر على الإزعاج";
                     res.status(200).json(appData);
                 } else {
-                    connection.query('SELECT cityId FROM moderators WHERE userid=(SELECT users.id FROM users WHERE email=?)', [decoded.email], function(err, rows, fields) {
+                    connection.query('SELECT cityId FROM moderators WHERE userid=?', [decoded.id], function(err, rows, fields) {
                         if (err) {
                             appData["error"] = 1;
                             appData["data"] = "خطأ في الإتصال بقاعدة البيانات, سنقوم بحل المشكلة قريبا, نعتذر على الإزعاج";
@@ -156,7 +156,7 @@ users.post('/addpharmacy', function(req, res) {
                                 }
                             }else{
                                 appData["error"] = 1;
-                                appData["data"] = "ليست لديك أي صلاحيات في هذه المدينة";
+                                appData["data"] = "ليست لديك صلاحيات في أي مدينة";
                                 res.status(200).json(appData);
                             }
                         }
@@ -196,7 +196,7 @@ users.post('/delpharmacy', function (req, res) {
                     appData["data"] = "خطأ في الإتصال بقاعدة البيانات, سنقوم بحل المشكلة قريبا, نعتذر على الإزعاج";
                     res.status(200).json(appData);
                 } else {
-                    connection.query('SELECT cityId FROM moderators WHERE userid=(SELECT users.id FROM users WHERE email=?)', [decoded.email], function (err, ModRows, fields) {
+                    connection.query('SELECT cityId FROM moderators WHERE userid=?', [decoded.id], function (err, ModRows, fields) {
                         if (err) {
                             appData["error"] = 1;
                             appData["data"] = "خطأ في الإتصال بقاعدة البيانات, سنقوم بحل المشكلة قريبا, نعتذر على الإزعاج";
@@ -241,7 +241,7 @@ users.post('/delpharmacy', function (req, res) {
                                 });
                             } else {
                                 appData["error"] = 1;
-                                appData["data"] = "ليست لديك أي صلاحيات في هذه المدينة";
+                                appData["data"] = "ليست لديك صلاحيات في أي مدينة";
                                 res.status(200).json(appData);
                             }
                         }
@@ -269,6 +269,15 @@ users.post('/addshift', function (req, res) {
         "date": req.body.date
     };
 
+    for (let i = 0; i < Object.keys(shift).length; i++) {
+        if (!shift[Object.keys(shift)[i]]) {
+            appData["error"] = 1;
+            appData["data"] = "Please send a " + Object.keys(shift)[i];
+            res.status(200).json(appData);
+            return;
+        }
+    }
+
     if (token) {
         try {
             var decoded = jwt.verify(token, process.env.SECRET_KEY);
@@ -278,7 +287,7 @@ users.post('/addshift', function (req, res) {
                     appData["data"] = "خطأ في الإتصال بقاعدة البيانات, سنقوم بحل المشكلة قريبا, نعتذر على الإزعاج";
                     res.status(200).json(appData);
                 } else {
-                    connection.query('SELECT cityId FROM moderators WHERE userid=(SELECT users.id FROM users WHERE email=?)', [decoded.email], function (err, rows, fields) {
+                    connection.query('SELECT cityId FROM moderators WHERE userid=?', [decoded.id], function (err, rows, fields) {
                         if (err) {
                             appData["error"] = 1;
                             appData["data"] = "خطأ في الإتصال بقاعدة البيانات, سنقوم بحل المشكلة قريبا, نعتذر على الإزعاج";
@@ -291,7 +300,7 @@ users.post('/addshift', function (req, res) {
                                         hasPermissions = true;
                                 });
                                 if (hasPermissions || decoded.isadmin) {
-                                    connection.query('INSERT INTO pharmacy SET ?', pharmacy, function (err, UsersRows, fields) {
+                                    connection.query('INSERT INTO nightshift SET ?', shift, function (err, UsersRows, fields) {
                                         if (err) {
                                             appData["error"] = 1;
                                             appData["data"] = "خطأ في الإتصال بقاعدة البيانات, سنقوم بحل المشكلة قريبا, نعتذر على الإزعاج";
@@ -309,7 +318,92 @@ users.post('/addshift', function (req, res) {
                                 }
                             } else {
                                 appData["error"] = 1;
-                                appData["data"] = "ليست لديك أي صلاحيات في هذه المدينة";
+                                appData["data"] = "ليست لديك صلاحيات في أي مدينة";
+                                res.status(200).json(appData);
+                            }
+                        }
+                    });
+                    connection.release();
+                }
+            });
+        } catch (err) {
+            appData["error"] = 1;
+            appData["data"] = "Token is invalid";
+            res.status(200).json(appData);
+        }
+    } else {
+        appData["error"] = 1;
+        appData["data"] = "Please send a token";
+        res.status(200).json(appData);
+    }
+});
+
+users.post('/delshift', function (req, res) {
+    var appData = {};
+    var token = req.body.token || req.query.token;
+    var shiftId = req.body.shiftId || req.query.shiftId;
+    if(!shiftId){
+        appData["error"] = 1;
+        appData["data"] = "Please send a shiftId";
+        res.status(200).json(appData);
+        return;
+    }
+
+    if (token) {
+        try {
+            var decoded = jwt.verify(token, process.env.SECRET_KEY);
+            database.connection.getConnection(function (err, connection) {
+                if (err) {
+                    appData["error"] = 1;
+                    appData["data"] = "خطأ في الإتصال بقاعدة البيانات, سنقوم بحل المشكلة قريبا, نعتذر على الإزعاج";
+                    res.status(200).json(appData);
+                } else {
+                    connection.query('SELECT cityId FROM moderators WHERE userid=?', [decoded.id], function (err, ModRows, fields) {
+                        if (err) {
+                            appData["error"] = 1;
+                            appData["data"] = "خطأ في الإتصال بقاعدة البيانات, سنقوم بحل المشكلة قريبا, نعتذر على الإزعاج";
+                            res.status(200).json(appData);
+                        } else {
+                            if (ModRows.length > 0 || decoded.isadmin) {
+                                connection.query('SELECT pharmacy.cityId FROM nightshift JOIN pharmacy ON pharmacy.id=nightshift.pharmacyId WHERE nightshift.id=?', [shiftId], function (err, ShiftRows, fields) {
+                                    if (err) {
+                                        appData["error"] = 1;
+                                        appData["data"] = "خطأ في الإتصال بقاعدة البيانات, سنقوم بحل المشكلة قريبا, نعتذر على الإزعاج";
+                                        res.status(200).json(appData);
+                                    } else {
+                                        if (ShiftRows.length > 0) {
+                                            var hasPermissions = false;
+                                            ModRows.forEach(ModRow => {
+                                                if (ModRow.cityId == ShiftRows[0].cityId)
+                                                    hasPermissions = true;
+                                            });
+                                            if (hasPermissions || decoded.isadmin) {
+                                                connection.query('DELETE FROM nightshift WHERE id=?', [shiftId], function (err, UsersRows, fields) {
+                                                    if (err) {
+                                                        appData["error"] = 1;
+                                                        appData["data"] = "خطأ في الإتصال بقاعدة البيانات, سنقوم بحل المشكلة قريبا, نعتذر على الإزعاج";
+                                                        res.status(200).json(appData);
+                                                    } else {
+                                                        appData["error"] = 0;
+                                                        appData["data"] = "تم إزالة النوبة اليلية بنجاح";
+                                                        res.status(200).json(appData);
+                                                    }
+                                                });
+                                            } else {
+                                                appData["error"] = 1;
+                                                appData["data"] = "ليست لديك أي صلاحيات في هذه المدينة";
+                                                res.status(200).json(appData);
+                                            }
+                                        }else{
+                                            appData["error"] = 1;
+                                            appData["data"] = "لا يوجد بيانات";
+                                            res.status(200).json(appData);
+                                        }
+                                    }
+                                });
+                            } else {
+                                appData["error"] = 1;
+                                appData["data"] = "ليست لديك صلاحيات في أي مدينة";
                                 res.status(200).json(appData);
                             }
                         }
@@ -330,63 +424,56 @@ users.post('/addshift', function (req, res) {
 });
 
 // Admin
-users.post('/setmoderator', function(req, res) {
+users.post('/setmoderator', function (req, res) {
     var appData = {};
     var token = req.body.token || req.headers['token'] || req.query.token;
-    var email = req.query.email || req.body.email;
     var moderator = {
-        "userid": req.body.id || req.query.id,
+        "userid": req.body.userId || req.query.userId,
         "cityId": req.body.cityId || req.query.cityId
     };
+    for (let i = 0; i < Object.keys(moderator).length; i++) {
+        if (!moderator[Object.keys(moderator)[i]]) {
+            appData["error"] = 1;
+            appData["data"] = "Please send a " + Object.keys(moderator)[i];
+            res.status(200).json(appData);
+            return;
+        }
+    }
     if (token) {
         try {
             var decoded = jwt.verify(token, process.env.SECRET_KEY);
-            if(decoded.email != email){
-                appData["error"] = 1;
-                appData["data"] = "Unauthorized";
-                return res.status(200).json(appData);
-            }else{
-                database.connection.getConnection(function(err, connection) {
-                    if (err) {
-                        appData["error"] = 1;
-                        appData["data"] = "خطأ في الإتصال بقاعدة البيانات, سنقوم بحل المشكلة قريبا, نعتذر على الإزعاج";
-                        res.status(200).json(appData);
-                    } else {
-                        connection.query('SELECT isadmin FROM users WHERE id=(SELECT users.id FROM users WHERE email=?)', [email], function(err, rows, fields) {
+            database.connection.getConnection(function (err, connection) {
+                if (err) {
+                    appData["error"] = 1;
+                    appData["data"] = "خطأ في الإتصال بقاعدة البيانات, سنقوم بحل المشكلة قريبا, نعتذر على الإزعاج";
+                    res.status(200).json(appData);
+                } else {
+                    if (decoded.isadmin) {
+                        connection.query('INSERT INTO moderators SET ?', moderator, function (err, rows, fields) {
                             if (err) {
                                 appData["error"] = 1;
                                 appData["data"] = "خطأ في الإتصال بقاعدة البيانات, سنقوم بحل المشكلة قريبا, نعتذر على الإزعاج";
                                 res.status(200).json(appData);
-                            }else{
-                                if(rows.length > 0 && rows[0].isadmin == 1){ 
-                                    connection.query('INSERT INTO moderators SET ?', moderator, function(err, rows, fields) {
-                                        if (err) {
-                                            appData["error"] = 1;
-                                            appData["data"] = "خطأ في الإتصال بقاعدة البيانات, سنقوم بحل المشكلة قريبا, نعتذر على الإزعاج";
-                                            res.status(200).json(appData);
-                                        }else{
-                                            appData["error"] = 0;
-                                            appData["data"] = "تم إضافة المشرف بنجاح";
-                                            res.status(200).json(appData);
-                                        }
-                                    });
-                                }else{
-                                    appData["error"] = 1;
-                                    appData["data"] = "Unauthorized access";
-                                    res.status(200).json(appData);
-                                }
+                            } else {
+                                appData["error"] = 0;
+                                appData["data"] = "تم إضافة المشرف بنجاح";
+                                res.status(200).json(appData);
                             }
                         });
-                        connection.release();
+                    } else {
+                        appData["error"] = 1;
+                        appData["data"] = "Unauthorized access";
+                        res.status(200).json(appData);
                     }
-                });
-            }
+                    connection.release();
+                }
+            });
         } catch (err) {
             appData["error"] = 1;
             appData["data"] = "Token is invalid";
             res.status(200).json(appData);
         }
-    }else{
+    } else {
         appData["error"] = 1;
         appData["data"] = "Please send a token";
         res.status(200).json(appData);
