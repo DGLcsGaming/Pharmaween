@@ -28,29 +28,31 @@
 
             <!-- Signup Form -->
             <form id="formSignup">
-                <div class="form-group">
-                    <input type="text" id="first_name" class="fadeIn second" name="first_name" placeholder="الإسم الأول"
-                        required>
+                <div class="form-group mb-3">
+                    <input type="text" id="first_name" class="fadeIn second form-control" name="first_name" placeholder="الإسم الأول" required>
                 </div>
-                <div class="form-group">
-                    <input type="text" id="last_name" class="fadeIn second" name="last_name" placeholder="إسم العائلة"
-                        required>
+                <div class="form-group mb-3">
+                    <input type="text" id="last_name" class="fadeIn second form-control" name="last_name" placeholder="إسم العائلة" required>
                 </div>
-                <div class="form-group">
-                    <input type="email" id="email_signup" class="fadeIn third" name="email" placeholder="البريد الإلكتروني"
+                <div class="form-group mb-3">
+                    <input type="email" id="email_signup" class="fadeIn third fadeIn third form-control" name="email" placeholder="البريد الإلكتروني" required>
+                </div>
+                <div class="form-group mb-3">
+                    <input type="email" id="email_signup" class="fadeIn third form-control" name="email" placeholder="البريد الإلكتروني" required>
+                </div>
+                <div class="input-group mb-3">
+                    <div class="input-group-prepend">
+                        <span class="input-group-text">(+213)</span>
+                    </div>
+                    <input type="text" id="tel_signup" class="form-control" name="tel" placeholder="رقم الهاتف"
+                        maxlength="10" required>
+                </div>
+                <div class="form-group mb-3">
+                    <input type="password" id="password_signup" class="fadeIn third form-control" name="password" placeholder="كلمة المرور"
                         class="form-control" required>
                 </div>
-                <div class="form-group">
-                    <label class="countrycode">(+213) 0</label>
-                    <input type="tel" id="tel_signup" class="fadeIn third" name="tel" placeholder="رقم الهاتف" maxlength="9"
-                        class="form-control" required>
-                </div>
-                <div class="form-group">
-                    <input type="password" id="password_signup" class="fadeIn third" name="password" placeholder="كلمة المرور"
-                        class="form-control" required>
-                </div>
-                <div class="form-group">
-                    <input type="password" id="confirm_password_signup" class="fadeIn fourth" name="confirm_password"
+                <div class="form-group mb-3">
+                    <input type="password" id="confirm_password_signup" class="fadeIn fourth form-control" name="confirm_password"
                         placeholder="تأكيد كلمة المرور" class="form-control" required>
                 </div>
                 <input type="submit" class="fadeIn fourth" value="التسجيل">

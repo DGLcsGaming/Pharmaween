@@ -287,35 +287,49 @@ users.post('/addshift', function (req, res) {
                     appData["data"] = "خطأ في الإتصال بقاعدة البيانات, سنقوم بحل المشكلة قريبا, نعتذر على الإزعاج";
                     res.status(200).json(appData);
                 } else {
-                    connection.query('SELECT cityId FROM moderators WHERE userid=?', [decoded.id], function (err, rows, fields) {
+                    connection.query('SELECT cityId FROM moderators WHERE userid=?', [decoded.id], function (err, ModRows, fields) {
                         if (err) {
                             appData["error"] = 1;
                             appData["data"] = "خطأ في الإتصال بقاعدة البيانات, سنقوم بحل المشكلة قريبا, نعتذر على الإزعاج";
                             res.status(200).json(appData);
                         } else {
-                            if (rows.length > 0 || decoded.isadmin) {
-                                var hasPermissions = false;
-                                rows.forEach(row => {
-                                    if (row.cityId == pharmacy.cityId)
-                                        hasPermissions = true;
-                                });
-                                if (hasPermissions || decoded.isadmin) {
-                                    connection.query('INSERT INTO nightshift SET ?', shift, function (err, UsersRows, fields) {
-                                        if (err) {
+                            if (ModRows.length > 0 || decoded.isadmin) {
+                                connection.query('SELECT pharmacy.cityId FROM pharmacy WHERE pharmacy.id=?', [shift.pharmacyId], function (err, PharmRows, fields) {
+                                    if (err) {
+                                        appData["error"] = 1;
+                                        appData["data"] = "خطأ في الإتصال بقاعدة البيانات, سنقوم بحل المشكلة قريبا, نعتذر على الإزعاج";
+                                        res.status(200).json(appData);
+                                    } else {
+                                        if (PharmRows.length > 0) {
+                                            var hasPermissions = false;
+                                            ModRows.forEach(ModRow => {
+                                                if (ModRow.cityId == PharmRows[0].cityId)
+                                                    hasPermissions = true;
+                                            });
+                                            if (hasPermissions || decoded.isadmin) {
+                                                connection.query('INSERT INTO nightshift SET ?', shift, function (err, UsersRows, fields) {
+                                                    if (err) {
+                                                        appData["error"] = 1;
+                                                        appData["data"] = "خطأ في الإتصال بقاعدة البيانات, سنقوم بحل المشكلة قريبا, نعتذر على الإزعاج";
+                                                        res.status(200).json(appData);
+                                                    } else {
+                                                        appData["error"] = 0;
+                                                        appData["data"] = "تم إضافة الصيدلية بنجاح";
+                                                        res.status(200).json(appData);
+                                                    }
+                                                });
+                                            } else {
+                                                appData["error"] = 1;
+                                                appData["data"] = "ليست لديك أي صلاحيات في هذه المدينة";
+                                                res.status(200).json(appData);
+                                            }
+                                        }else{
                                             appData["error"] = 1;
-                                            appData["data"] = "خطأ في الإتصال بقاعدة البيانات, سنقوم بحل المشكلة قريبا, نعتذر على الإزعاج";
-                                            res.status(200).json(appData);
-                                        } else {
-                                            appData["error"] = 0;
-                                            appData["data"] = "تم إضافة الصيدلية بنجاح";
+                                            appData["data"] = "لا يوجد بيانات";
                                             res.status(200).json(appData);
                                         }
-                                    });
-                                } else {
-                                    appData["error"] = 1;
-                                    appData["data"] = "ليست لديك أي صلاحيات في هذه المدينة";
-                                    res.status(200).json(appData);
-                                }
+                                    }
+                                });
                             } else {
                                 appData["error"] = 1;
                                 appData["data"] = "ليست لديك صلاحيات في أي مدينة";
@@ -385,7 +399,7 @@ users.post('/delshift', function (req, res) {
                                                         res.status(200).json(appData);
                                                     } else {
                                                         appData["error"] = 0;
-                                                        appData["data"] = "تم إزالة النوبة اليلية بنجاح";
+                                                        appData["data"] = "تم إزالة المناوبة الليلية بنجاح";
                                                         res.status(200).json(appData);
                                                     }
                                                 });
@@ -633,15 +647,14 @@ users.get('/shifts/today/city/:city?', function(req, res) {
             appData["data"] = "Error connecting to the database, we will fix the problem shortly.";
             res.status(200).json(appData);
         } else {
-            connection.query('SELECT pharmacy.name AS pharmacy, pharmacy.lon, pharmacy.lat, pharmacy.image, nightshift.date, city.name AS city, state.name AS state FROM pharmacy JOIN nightshift ON nightshift.pharmacyId=pharmacy.id JOIN city ON city.id=pharmacy.cityId JOIN state ON state.code=city.stateCode WHERE city.id = ? AND date=CURRENT_DATE()', [city], function(err, CityRows, fields) {
+            var a = connection.query('SELECT pharmacy.name AS pharmacy, pharmacy.lon, pharmacy.lat, pharmacy.image, nightshift.date as date, city.name AS city, state.name AS state FROM pharmacy JOIN nightshift ON nightshift.pharmacyId=pharmacy.id JOIN city ON city.id=pharmacy.cityId JOIN state ON state.code=city.stateCode WHERE city.id = ? AND date=CURRENT_DATE()', [city], function(err, CityRows, fields) {
                 if (err) {
                     appData.error = 1;
-                    appData["data"] = err;
+                    appData["data"] = "Error connecting to the database, we will fix the problem shortly.";
                     res.status(200).json(appData);
                 } else {
                     appData.error = 0;
-                    var data = CityRows;
-                    appData["data"] = data;
+                    appData["data"] = CityRows;
                     res.status(200).json(appData);
                 }
             });

@@ -28,7 +28,7 @@ $(document).ready(function (){
               }
           },
           error: function(XMLHttpRequest, textStatus, errorThrown) {
-             alert("خطأ في الإتصال بالسيرفر, سنقوم بحل المشكلة قريبا, نعتذر على الإزعاج");
+            alert("خطأ في الإتصال بالسيرفر, سنقوم بحل المشكلة قريبا, نعتذر على الإزعاج");
           },
           complete: function(){
             submitButton.prop('disabled', false);
@@ -55,8 +55,8 @@ $(document).ready(function (){
         },
         tel: {
           required: true,
-          minlength: 9,
-          maxlength: 9,
+          minlength: 10,
+          maxlength: 10,
           number: true
         },
         password: {
@@ -84,8 +84,8 @@ $(document).ready(function (){
           },
           tel: {
             required: "الرجاء إدخال رقم الهاتف",
-            minlength: "يجب على رقم الهاتف أن يتكون على من 9 أرقام",
-            maxlength: "يجب على رقم الهاتف أن يتكون على من 9 أرقام",
+            minlength: "يجب على رقم الهاتف أن يتكون على من 10 أرقام",
+            maxlength: "يجب على رقم الهاتف أن يتكون على من 10 أرقام",
             number: "الرجاء إدخال أرقام فقط"
           },
           password: {

@@ -15,6 +15,11 @@ function checkLogin() {
 
 
 $(document).ready(function (){
+    $('.datepicker').datepicker({
+        daysOfWeekHighlighted: '5,6',
+        language:'fr',
+        weekStart: 0
+    });
     ///////////////// Click and Submit Events //////////////////
     $(document).on('click', '#login', function() {
         window.location.replace('./login');
@@ -145,7 +150,7 @@ async function DashboardView(tokenDecoded){
     $('#accountType').text('');
     $('#accountNumber').text('#'+tokenDecoded.id);
     $('#account_daysleft').text('');
-
+/* 
      // Populate episodes table
     getEpisodes().then(function (data){
         $('#episodesTable').find('tbody').empty();
@@ -228,7 +233,7 @@ async function DashboardView(tokenDecoded){
             });
         });
     });
-
+ */
     
     
 }

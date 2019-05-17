@@ -80,10 +80,19 @@ html {
     align-items: center;
     flex-direction: column; 
     justify-content: center;
-    /*width: 100%;
-    min-height: 100%; */
-    padding: 10px;
-    min-width: 500px
+  }
+
+  #formContent {
+    -webkit-border-radius: 10px 10px 10px 10px;
+    border-radius: 10px 10px 10px 10px;
+    background: #fff;
+    width: 100%;
+    max-width: 450px;
+    position: relative;
+    -webkit-box-shadow: 0 30px 60px 0 rgba(0,0,0,0.3);
+    box-shadow: 0 30px 60px 0 rgba(0,0,0,0.3);
+    text-align: center;
+    transition: all 0.25s ease-in-out;
   }
   
   #formContent-login {
@@ -105,7 +114,6 @@ html {
     background: #fff;
     width: 100%;
     max-width: 450px;
-    min-height: 450;
     position: relative;
     -webkit-box-shadow: 0 30px 60px 0 rgba(0,0,0,0.3);
     box-shadow: 0 30px 60px 0 rgba(0,0,0,0.3);
@@ -113,18 +121,7 @@ html {
     transition: all 0.25s ease-in-out;
   }
 
-  #dashboard_premium {
-    display: table;
-    -webkit-border-radius: 10px 10px 10px 10px;
-    border-radius: 10px 10px 10px 10px;
-    background: #fff;
-    width: 100%;
-    position: relative;
-    -webkit-box-shadow: 0 30px 60px 0 rgba(0,0,0,0.3);
-    box-shadow: 0 30px 60px 0 rgba(0,0,0,0.3);
-    text-align: center;
-  }
-  #dashboard_regular {
+  #dashboard {
     display: table;
     -webkit-border-radius: 10px 10px 10px 10px;
     border-radius: 10px 10px 10px 10px;
@@ -157,7 +154,7 @@ html {
     -webkit-border-radius: 0 0 10px 10px;
     border-radius: 0 0 10px 10px;
   }
-  #formFooter-dashboard {
+  #formFooter {
     background-color: #f6f6f6;
     border-top: 1px solid #dce8f1;
     padding: 25px;
@@ -226,7 +223,7 @@ html {
     text-decoration: none;
     display: inline-block;
     font-size: 16px;
-    margin: 5px;
+    margin-left : 0px;
     width: auto;
     border: 2px solid #f6f6f6;
     -webkit-transition: all 0.5s ease-in-out;
@@ -569,17 +566,34 @@ html {
   height: 0!important
 }
 
-.countrycode{
-  width: 0;
-  z-index: 2;
-  float: left;
-  position: relative;
-  top: 1.3333em;
-  left: 7.7em;
-  color:#6c757d;
-  white-space: nowrap;
+#formSignup .input-group{
+  padding: 0 15px 0 15px;
 }
 
-#tel_signup::placeholder{
-  text-align: right;
+#formLogin .input-group {
+  padding: 0 15px 0 15px;
+}
+
+.input-group{
+  justify-content: center;
+}
+
+.form-group input{
+  box-sizing: border-box;
+  width: 93%;
+} 
+
+.error{
+  color: #D8000C;
+}
+
+#pickers-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+#pickers-container button{
+  padding: 15px 32px;
+  margin-right: 5px;
 }

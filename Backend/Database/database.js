@@ -8,6 +8,6 @@ var connection = mysql.createPool({
     database:'pharmaciesshifts',
     port: 3306,
     debug: false,
-    multipleStatements: true
+    dateStrings : true
 });
 module.exports.connection = connection;
