@@ -13,20 +13,20 @@ app.use(bodyParser.urlencoded({
 
 var Routes = require('./Routes/Routes');
 
-app.use('/api',Routes);
+app.use('/api', Routes);
 
 app.use(express.static(__dirname + '/files'));
 
-app.get("/dashboard",function(req, res){
-    res.status(200).sendFile(path.join(__dirname+'/files/dashboard.html'));
+app.get("/dashboard", function (req, res) {
+    res.status(200).sendFile(path.join(__dirname + '/files/dashboard.html'));
 });
-app.get("/login",function(req, res){
-    res.status(200).sendFile(path.join(__dirname+'/files/login.html'));
+app.get("/login", function (req, res) {
+    res.status(200).sendFile(path.join(__dirname + '/files/login.html'));
 });
-app.get("/register",function(req, res){
-    res.status(200).sendFile(path.join(__dirname+'/files/register.html'));
+app.get("/register", function (req, res) {
+    res.status(200).sendFile(path.join(__dirname + '/files/register.html'));
 });
 
-app.listen(port,function(){
-    console.log("Server is running on port: "+port);
+app.listen(port, function () {
+    console.log("Server is running on port: " + port);
 });
