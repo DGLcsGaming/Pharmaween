@@ -4,7 +4,7 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge" />
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-    <link rel="stylesheet" href="css/preloader.css">
+    <title><%= title%></title>
     <script src="js/jquery-3.3.1.min.js"></script>
     <link href="css/bootstrap.min.css" rel="stylesheet" id="bootstrap-css">
     <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.4.1/css/all.css"
@@ -21,7 +21,9 @@
     </script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.7.3/Chart.bundle.min.js"></script>
     <script src="js/chart-js-config.js"></script>
-    <script type="text/javascript" src="js/admin.js"></script>
+    <link rel="stylesheet" href="css/preloader.css">
+    <link rel="stylesheet" href="<%= maincss%>">
+    <script type="text/javascript" src="<%= mainjs%>"></script>
 
 
 </head>
@@ -34,21 +36,6 @@
             xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape" width="120.79934mm" height="20.661348mm"
             viewBox="0 0 120.79934 20.661348" version="1.1" id="svg8" inkscape:version="0.92.4 (5da689c313, 2019-01-14)"
             sodipodi:docname="pharmaween-logo.svg">
-            <metadata id="metadata4564">
-                <rdf:RDF>
-                    <cc:Work rdf:about="">
-                        <dc:format>image/svg+xml</dc:format>
-                        <dc:type rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
-                        <dc:title></dc:title>
-                    </cc:Work>
-                </rdf:RDF>
-            </metadata>
-            <sodipodi:namedview pagecolor="#ffffff" bordercolor="#666666" borderopacity="1" objecttolerance="10"
-                gridtolerance="10" guidetolerance="10" inkscape:pageopacity="0" inkscape:pageshadow="2"
-                inkscape:window-width="1920" inkscape:window-height="1001" id="namedview4562" showgrid="false"
-                inkscape:zoom="1.5491329" inkscape:cx="289.4662" inkscape:cy="7.8427785" inkscape:window-x="-9"
-                inkscape:window-y="-9" inkscape:window-maximized="1" inkscape:current-layer="layer1" fit-margin-top="0"
-                fit-margin-left="0" fit-margin-right="0" fit-margin-bottom="0" />
             <defs id="defs2" />
             <g inkscape:label="Layer 1" inkscape:groupmode="layer" id="layer1"
                 transform="translate(-25.914479,-102.5331)">
@@ -135,19 +122,19 @@
             </header>
             <ul class="nav flex-column nav-fill nav-pills">
                 <li class="nav-item arabic">
-                    <a href="#" class="nav-link active">
+                    <a href="#" <% if (activenav == 'main') { %>class="nav-link active" <% } else%> <%{%> class="nav-link" <%}%>>
                         <span>الرئيسية</span>
                         <i class="fas fa-home"></i>
                     </a>
                 </li>
                 <li class="nav-item arabic">
-                    <a href="#" class="nav-link">
+                    <a href="moderator-shifts" <% if (activenav == 'shifts') { %>class="nav-link active" <% } else%> <%{%> class="nav-link" <%}%>>
                         <span>المناوبات</span>
                         <i class="fas fa-exchange-alt"></i>
                     </a>
                 </li>
                 <li class="nav-item arabic">
-                    <a href="#" class="nav-link">
+                    <a href="moderator-pharmacies" <% if (activenav == 'pharmacies') { %>class="nav-link active" <% } else%> <%{%> class="nav-link" <%}%>>
                         <span>الصيدليات</span>
                         <i class="icon-pharmacie"></i>
                     </a>
@@ -188,152 +175,3 @@
                     <i class="fas fa-bars"></i>
                 </a>
             </header>
-            <main class="dash-content">
-                <div class="container-fluid">
-                    <div class="row dash-row">
-                        <div class="col-xl-4">
-                            <div class="stats stats-primary">
-                                <h3 class="stats-title arabic-big">عدد المشرفين</h3>
-                                <div class="stats-content">
-                                    <div class="stats-data">
-                                        <div class="stats-number">0</div>
-                                        <div class="stats-change">
-                                            <span class="stats-timeframe arabic-font" dir="rtl">من آخر شهر</span>
-                                            <span class="stats-percentage">+0%</span>
-                                        </div>
-                                    </div>
-                                    <div class="stats-icon">
-                                        <i class="fas fa-user"></i>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="col-xl-4">
-                            <div class="stats stats-success">
-                                <h3 class="stats-title arabic-big">عدد المناوبات اليوم</h3>
-                                <div class="stats-content">
-                                    <div class="stats-data">
-                                        <div class="stats-number">0</div>
-                                        <div class="stats-change">
-                                            <span class="stats-timeframe arabic-font" dir="rtl">من آخر شهر</span>
-                                            <span class="stats-percentage">+0%</span>
-                                        </div>
-                                    </div>
-                                    <div class="stats-icon">
-                                        <i class="fas fa-cart-arrow-down"></i>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="col-xl-4">
-                            <div class="stats stats-danger">
-                                <h3 class="stats-title arabic-big">عدد الزوار</h3>
-                                <div class="stats-content">
-                                    <div class="stats-data">
-                                        <div class="stats-number">0</div>
-                                        <div class="stats-change">
-                                            <span class="stats-timeframe arabic-font" dir="rtl">من آخر شهر</span>
-                                            <span class="stats-percentage">+0%</span>
-                                        </div>
-                                    </div>
-                                    <div class="stats-icon">
-                                        <i class="fas fa-users"></i>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="row">
-                        <div class="col-xl-6">
-                            <div class="card spur-card">
-                                <div class="card-header">
-                                    <div class="spur-card-title" dir="rtl"> الزوار </div>
-                                    <div class="spur-card-icon">
-                                        <i class="fas fa-chart-bar"></i>
-                                    </div>
-                                </div>
-                                <div class="card-body spur-card-body-chart">
-                                    <canvas id="spurChartjsBar"></canvas>
-                                    <script>
-                                        var ctx = document.getElementById("spurChartjsBar").getContext('2d');
-                                        var myChart = new Chart(ctx, {
-                                            type: 'bar',
-                                            data: {
-                                                labels: ["Monday", "Tuesday", "Wednesday", "Thursday",
-                                                    "Friday"
-                                                ],
-                                                datasets: [{
-                                                    label: 'Blue',
-                                                    data: [12, 19, 3, 5, 2],
-                                                    backgroundColor: window.chartColors.primary,
-                                                    borderColor: 'transparent'
-                                                }]
-                                            },
-                                            options: {
-                                                legend: {
-                                                    display: false
-                                                },
-                                                scales: {
-                                                    yAxes: [{
-                                                        ticks: {
-                                                            beginAtZero: true
-                                                        }
-                                                    }]
-                                                }
-                                            }
-                                        });
-                                    </script>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="col-xl-6">
-                            <div class="card spur-card">
-                                <div class="card-header">
-                                    <div class="spur-card-title" dir="title"> الإشعارات </div>
-                                    <div class="spur-card-icon">
-                                        <i class="fas fa-bell"></i>
-                                    </div>
-                                </div>
-                                <div class="card-body ">
-                                    <div class="notifications">
-                                        <a href="#!" class="notification">
-                                            <span class="notification-time arabic-font" dir="rtl">من 21 يوم</span>
-                                            <div class="notification-text">لديك رسالة جديدة</div>
-                                            <div class="notification-icon">
-                                                <i class="fas fa-inbox"></i>
-                                            </div>
-                                        </a>
-                                        <a href="#!" class="notification">
-                                            <span class="notification-time arabic-font" dir="rtl">من 21 يوم</span>
-                                            <div class="notification-text">لديك رسالة جديدة</div>
-                                            <div class="notification-icon">
-                                                <i class="fas fa-inbox"></i>
-                                            </div>
-                                        </a>
-                                        <a href="#!" class="notification">
-                                            <span class="notification-time arabic-font" dir="rtl">من 21 يوم</span>
-                                            <div class="notification-text">لديك رسالة جديدة</div>
-                                            <div class="notification-icon">
-                                                <i class="fas fa-inbox"></i>
-                                            </div>
-                                        </a>
-                                        <div class="notifications-show-all">
-                                            <a href="#!">Show all</a>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </main>
-        </div>
-    </div>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js"
-        integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1" crossorigin="anonymous">
-    </script>
-    <script src="js/bootstrap.min.js"></script>
-    <script src="js/spur.js"></script>
-</body>
-
-</html>
