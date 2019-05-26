@@ -1,0 +1,24 @@
+﻿SET GLOBAL event_scheduler = ON;
+DROP EVENT IF EXISTS statistics;
+CREATE EVENT statistics
+  ON SCHEDULE
+    EVERY 1 DAY
+    STARTS (TIMESTAMP(CURRENT_DATE) + INTERVAL 1 DAY + INTERVAL 1 HOUR)
+  DO
+	INSERT INTO statistics(time, totalUsers, premium, regular, todayActiveUsers, todayPremiumActiveUsers, todayRegularActiveUsers, registeredToday) SELECT NOW() AS time, COUNT(*) AS totalUsers, (SELECT COUNT(*) FROM users WHERE users.ispremium=1) AS premium, (SELECT COUNT(*) FROM users WHERE users.ispremium=0) AS regular, (SELECT COUNT(*) FROM users WHERE users.lastactive BETWEEN (NOW() - INTERVAL 24 HOUR) AND NOW()) AS todayActiveUsers, (SELECT COUNT(*) FROM users WHERE users.ispremium=1 AND users.lastactive BETWEEN (NOW() - INTERVAL 24 HOUR) AND NOW()) AS todayPremiumActiveUsers, (SELECT COUNT(*) FROM users WHERE users.ispremium=0 AND users.lastactive BETWEEN (NOW() - INTERVAL 24 HOUR) AND NOW()) AS todayRegularActiveUsers, (SELECT COUNT(*) FROM users WHERE users.registerdate = CURDATE()) AS registeredToday FROM users;
+
+
+SELECT NOW() AS time, COUNT(*) AS totalUsers, (SELECT COUNT(*) FROM users WHERE users.ispremium=1) AS premium, (SELECT COUNT(*) FROM users WHERE users.ispremium=0) AS regular, (SELECT COUNT(*) FROM users WHERE users.lastactive BETWEEN (NOW() - INTERVAL 24 HOUR) AND NOW()) AS todayActiveUsers, (SELECT COUNT(*) FROM users WHERE users.ispremium=1 AND users.lastactive BETWEEN (NOW() - INTERVAL 24 HOUR) AND NOW()) AS todayPremiumActiveUsers, (SELECT COUNT(*) FROM users WHERE users.ispremium=0 AND users.lastactive BETWEEN (NOW() - INTERVAL 24 HOUR) AND NOW()) AS todayRegularActiveUsers, (SELECT COUNT(*) FROM users WHERE users.registerdate = CURDATE()) AS registeredToday FROM users;
+
+
+PharmacyFinder:
+** BACK-END :
+- Set a response message if provided id is not found (CityId or StateID) @ /shifts/today/city/:city?
+- Edit Pharmacies and NightShifts.
+- Backend form validation using express-validator module.
+- Proper HTTP response codes.
+- JWT experation date.
+- Report Errors system.
+- Follow HTML accessibility guidlines
+** FRONT-END:
+-
