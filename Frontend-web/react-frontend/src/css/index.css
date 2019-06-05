@@ -34,3 +34,15 @@
   height: 24px;
   justify-content: space-around;
 }
+
+#searchCityContainer {
+  position: absolute;
+  z-index: 1000;
+  top: 0;
+  right: 0;
+  padding: 5px;
+}
+
+.modal-header .close {
+  margin: -1rem auto -1rem -1rem;
+}

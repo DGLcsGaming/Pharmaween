@@ -494,6 +494,53 @@ users.post('/setmoderator', function (req, res) {
     }
 });
 
+// Auto Complete
+users.get('/autocomplete', function (req, res) {
+    var appData = {};
+    var query = req.body.query || req.query.query;
+    var city = query.split(',')[0].trim();
+    var state = typeof (query.split(',')[1]) == 'undefined' ? null : query.split(',')[1].replace('.', '').trim();
+    if (query) {
+        database.connection.getConnection(function (err, connection) {
+            if (err) {
+                appData["error"] = 1;
+                appData["data"] = "خطأ في الإتصال بقاعدة البيانات, سنقوم بحل المشكلة قريبا, نعتذر على الإزعاج";
+                res.status(200).json(appData);
+            } else {
+                if (state === null) {
+                    connection.query('SELECT CONCAT(city.name,", ",state.name,".") as suggestion,city.id as id from city JOIN state ON state.code=city.stateCode WHERE city.name LIKE "%"?"%"', [city], function (err, rows, fields) {
+                        if (err) {
+                            appData["error"] = 1;
+                            appData["data"] = "خطأ في الإتصال بقاعدة البيانات, سنقوم بحل المشكلة قريبا, نعتذر على الإزعاج";
+                            res.status(200).json(appData);
+                        } else {
+                            appData["error"] = 0;
+                            appData["data"] = rows;
+                            res.status(200).json(appData);
+                        }
+                    });
+                } else {
+                    connection.query(`SELECT CONCAT(city.name,", ",state.name,".") as suggestion,city.id as id from city JOIN state ON state.code=city.stateCode WHERE city.name LIKE "${city}%" AND state.name LIKE "${state}%"`, [], function (err, rows, fields) {
+                        if (err) {
+                            appData["error"] = 1;
+                            appData["data"] = "خطأ في الإتصال بقاعدة البيانات, سنقوم بحل المشكلة قريبا, نعتذر على الإزعاج";
+                            res.status(200).json(appData);
+                        } else {
+                            appData["error"] = 0;
+                            appData["data"] = rows;
+                            res.status(200).json(appData);
+                        }
+                    });
+                }
+                connection.release();
+            }
+        });
+    } else {
+        appData["error"] = 1;
+        appData["data"] = "Please send a query";
+        res.status(200).json(appData);
+    }
+});
 // Usage Guide
 users.get('/', function(req, res) {
     var appData = {};
@@ -631,6 +678,31 @@ users.get('/pharmacies/city/:city?', function(req, res) {
 });
 
 //Shifts
+users.get('/shifts/today/all', function(req, res) {
+    var appData = {};
+    
+    database.connection.getConnection(function(err, connection) {
+        if (err) {
+            appData["error"] = 1;
+            appData["data"] = "Error connecting to the database, we will fix the problem shortly.";
+            res.status(200).json(appData);
+        } else {
+            var a = connection.query('SELECT nightshift.id AS shiftId, pharmacy.id AS pharmacyId, pharmacy.name AS pharmacy, pharmacy.lon, pharmacy.lat, pharmacy.image, nightshift.date as date, city.name AS city, state.name AS state FROM pharmacy JOIN nightshift ON nightshift.pharmacyId=pharmacy.id JOIN city ON city.id=pharmacy.cityId JOIN state ON state.code=city.stateCode WHERE date=CURRENT_DATE()', [], function(err, CityRows, fields) {
+                if (err) {
+                    appData.error = 1;
+                    appData["data"] = "Error connecting to the database, we will fix the problem shortly.";
+                    res.status(200).json(appData);
+                } else {
+                    appData.error = 0;
+                    appData["data"] = CityRows;
+                    res.status(200).json(appData);
+                }
+            });
+            connection.release();
+        }
+    });
+    
+});
 users.get('/shifts/today/city/:city?', function(req, res) {
     var appData = {};
     var city = req.params.city;
@@ -647,7 +719,7 @@ users.get('/shifts/today/city/:city?', function(req, res) {
             appData["data"] = "Error connecting to the database, we will fix the problem shortly.";
             res.status(200).json(appData);
         } else {
-            var a = connection.query('SELECT pharmacy.name AS pharmacy, pharmacy.lon, pharmacy.lat, pharmacy.image, nightshift.date as date, city.name AS city, state.name AS state FROM pharmacy JOIN nightshift ON nightshift.pharmacyId=pharmacy.id JOIN city ON city.id=pharmacy.cityId JOIN state ON state.code=city.stateCode WHERE city.id = ? AND date=CURRENT_DATE()', [city], function(err, CityRows, fields) {
+            var a = connection.query('SELECT nightshift.id AS shiftId, pharmacy.id AS pharmacyId, pharmacy.name AS pharmacy, pharmacy.lon, pharmacy.lat, pharmacy.image, nightshift.date as date, city.name AS city, state.name AS state FROM pharmacy JOIN nightshift ON nightshift.pharmacyId=pharmacy.id JOIN city ON city.id=pharmacy.cityId JOIN state ON state.code=city.stateCode WHERE city.id = ? AND date=CURRENT_DATE()', [city], function(err, CityRows, fields) {
                 if (err) {
                     appData.error = 1;
                     appData["data"] = "Error connecting to the database, we will fix the problem shortly.";

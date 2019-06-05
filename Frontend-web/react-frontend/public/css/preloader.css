@@ -1,0 +1,194 @@
+#preloader {
+  position: fixed;
+  width: 100%;
+  height: 100vh;
+  top: 0;
+  left: 0;
+  background-color: #181f2c;
+  transition: all 0.3s;
+  z-index: 9999999999;
+}
+
+#preloader-text {
+  position: fixed;
+  top: 60%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+}
+
+#preloader-text h5 {
+  color: #51668e;
+  font-size: calc(16px + 1vw);
+  white-space: nowrap;
+  font-family: "Tajawal", sans-serif;
+}
+
+.preload-finish {
+  opacity: 0;
+  pointer-events: none;
+}
+
+#preloader svg {
+  position: absolute;
+  width: 80vw;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+}
+
+#preloader #logo-p {
+  fill: #f8f9fa !important;
+  fill-opacity: 0 !important;
+  stroke: #f8f9fa !important;
+  stroke-width: 1 !important;
+  stroke-dasharray: 100 !important;
+  stroke-dashoffset: 100 !important;
+  animation: p 1s linear forwards;
+}
+
+#preloader #logo-h {
+  fill: #f8f9fa !important;
+  fill-opacity: 0 !important;
+  stroke: #f8f9fa !important;
+  stroke-width: 1 !important;
+  stroke-dasharray: 100 !important;
+  stroke-dashoffset: 100 !important;
+  animation: harma 0.5s linear forwards;
+  animation-delay: 0.2s;
+}
+
+#preloader #logo-a1 {
+  fill: #f8f9fa !important;
+  fill-opacity: 0 !important;
+  stroke: #f8f9fa !important;
+  stroke-width: 1 !important;
+  stroke-dasharray: 100 !important;
+  stroke-dashoffset: 100 !important;
+  animation: harma 0.5s linear forwards;
+  animation-delay: 0.4s;
+}
+
+#preloader #logo-r {
+  fill: #f8f9fa !important;
+  fill-opacity: 0 !important;
+  stroke: #f8f9fa !important;
+  stroke-width: 1 !important;
+  stroke-dasharray: 100 !important;
+  stroke-dashoffset: 100 !important;
+  animation: harma 0.5s linear forwards;
+  animation-delay: 0.6s;
+}
+
+#preloader #logo-m {
+  fill: #f8f9fa !important;
+  fill-opacity: 0 !important;
+  stroke: #f8f9fa !important;
+  stroke-width: 1 !important;
+  stroke-dasharray: 100 !important;
+  stroke-dashoffset: 100 !important;
+  animation: harma 0.5s linear forwards;
+  animation-delay: 0.8s;
+}
+
+#preloader #logo-a2 {
+  fill: #f8f9fa !important;
+  fill-opacity: 0 !important;
+  stroke: #f8f9fa !important;
+  stroke-width: 1 !important;
+  stroke-dasharray: 100 !important;
+  stroke-dashoffset: 100 !important;
+  animation: harma 0.5s linear forwards;
+  animation-delay: 1s;
+}
+
+#preloader #logo-waw {
+  fill: #f8f9fa !important;
+  fill-opacity: 0 !important;
+  stroke: #f8f9fa !important;
+  stroke-width: 1 !important;
+  stroke-dasharray: 100 !important;
+  stroke-dashoffset: 100 !important;
+  animation: harma 1.5s linear forwards;
+  animation-delay: 0s;
+}
+
+#preloader #logo-1stdot {
+  opacity: 0;
+  animation-name: first-dot;
+  animation-duration: 1.4s;
+  animation-iteration-count: infinite;
+}
+
+#preloader #logo-2nddot {
+  opacity: 0;
+  animation-name: second-dot;
+  animation-duration: 1.4s;
+  animation-delay: 0.4s;
+  animation-iteration-count: infinite;
+}
+
+#preloader #logo-3rddot {
+  opacity: 0;
+  animation-name: third-dot;
+  animation-duration: 1.4s;
+  animation-delay: 0.8s;
+  animation-iteration-count: infinite;
+}
+
+@keyframes p {
+  to {
+    stroke-dashoffset: 0;
+    fill-opacity: 1;
+    stroke-width: 0;
+  }
+}
+
+@keyframes harma {
+  to {
+    stroke-dashoffset: 0;
+    fill-opacity: 1;
+    stroke-width: 0;
+  }
+}
+
+@keyframes first-dot {
+  0% {
+    opacity: 0;
+  }
+
+  20% {
+    opacity: 1;
+  }
+
+  100% {
+    opacity: 0;
+  }
+}
+
+@keyframes second-dot {
+  0% {
+    opacity: 0;
+  }
+
+  20% {
+    opacity: 1;
+  }
+
+  100% {
+    opacity: 0;
+  }
+}
+
+@keyframes third-dot {
+  0% {
+    opacity: 0;
+  }
+
+  20% {
+    opacity: 1;
+  }
+
+  100% {
+    opacity: 0;
+  }
+}
