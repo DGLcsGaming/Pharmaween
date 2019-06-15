@@ -7,6 +7,7 @@ class LocateControl extends Component {
     const { options, startDirectly } = this.props;
     const { map } = this.props.leaflet;
     map.on("locationfound", this.props.onLocationFound);
+    map.on("locationerror", this.props.onLocationError);
 
     const lc = new Locate(options);
     lc.addTo(map);

@@ -6,6 +6,7 @@ import "leaflet/dist/leaflet.css";
 import Search from "./partial/Search";
 import LocationPromptModal from "./partial/LocationPromptModal";
 import LocateControl from "./partial/LocateControl";
+import RoutingMachine from "./RoutingMachine";
 import { GlobalStateContext } from "../GlobalState";
 
 /* Leaflet change Default Icon START */
@@ -110,7 +111,20 @@ const MainMap = props => {
         lon: lng
       }
     }));
+
+    // RoutingMachine.setWaypoints([]);
+    // L.latLng(lat, lng),
+    // L.latLng(mapState.shifts[0].lat, mapState.shifts[0].lon)
   };
+
+  const onLocationError = e => {
+    console.log(e.message);
+  };
+
+  const markerClicked = e => {
+    console.log(e.latlng.lat);
+  };
+
   return (
     <React.Fragment>
       <Map
@@ -125,6 +139,7 @@ const MainMap = props => {
           <LocateControl
             options={locateOptions}
             onLocationFound={onLocationFound}
+            onLocationError={onLocationError}
             startDirectly
           />
         )}
@@ -135,6 +150,15 @@ const MainMap = props => {
           toggle={toggleLocationModal}
           onAcceptedlocationPermission={onAcceptedlocationPermission}
         />
+        {mapState.shifts.length > 0 && mapState.hasUserLocation === true && (
+          <RoutingMachine
+            map={map}
+            road={[
+              L.latLng(mapState.userLocation.lat, mapState.userLocation.lon),
+              L.latLng(mapState.shifts[0].lat, mapState.shifts[0].lon)
+            ]}
+          />
+        )}
 
         <TileLayer
           attribution='&amp;copy <a href="http://osm.org/copyright">OpenStreetMap</a> contributors'
@@ -142,7 +166,10 @@ const MainMap = props => {
         />
 
         {mapState.shifts.map(shift => (
-          <Marker key={shift.shiftId} position={[shift.lat, shift.lon]}>
+          <Marker
+            key={shift.shiftId}
+            position={[shift.lat, shift.lon]}
+            onClick={markerClicked}>
             <Popup>
               <div className="popup">
                 <h5>

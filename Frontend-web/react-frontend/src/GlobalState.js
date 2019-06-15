@@ -11,10 +11,10 @@ export const GlobalStateProvider = props => {
   });
 
   const [mapState, setMapState] = useState({
-    isLoading: false,
     showLocationPrompt: false,
     showLocationControl: false,
     hasUserLocation: false,
+    selectedPharmacy: null,
     userLocation: {
       lat: 0,
       lon: 0

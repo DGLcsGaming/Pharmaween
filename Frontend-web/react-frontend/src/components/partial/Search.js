@@ -43,7 +43,7 @@ const Search = props => {
         autoFocus
         bsSize="large"
         emptyLabel="لا يوجد نتائج"
-        placeholder="(ولاية، مدينة..(بالفرنسية"
+        placeholder="مدينة، ولاية .. (بالفرنسية)"
         searchText="..جاري البحث"
         promptText="أدخل إسم الولاية أو المدينة"
         selectHintOnEnter
